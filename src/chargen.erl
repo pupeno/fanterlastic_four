@@ -11,33 +11,42 @@
 %% @author José Pablo Ezequiel "Pupeno" Fernández Silva <pupeno@pupeno.com> [http://pupeno.com]
 %% @copyright 2006 José Pablo Ezequiel "Pupeno" Fernández Silva
 %% @doc TODO: write documentation.
+%% @see gen_echo.
 
-{application, fanterlasticfour,
- [{description, "Fanterlastic Four provides the four fantastic services: Echo (RFC862), Character Generator (RFC864), Daytime (RFC867),  and Time (RFC868)."},
-  {vsn, "0.0.0"},
-  {modules, [fanterlasticfour_app, fanterlasticfour_sup, echo, chargen, daytime]},
-  {registered, [fanterlasticfour_sup, 
-                echo_tcp_launcher,
-                echo_udp_launcher,
-                echo_udp_worker, 
-                chargen_tcp_launcher,
-                chargen_udp_launcher,
-                chargen_udp_worker,
-                daytime_tcp_launcher,
-                daytime_udp_launcher,
-                daytime_udp_worker,
-                time_tcp_launcher,
-                time_udp_launcher,
-                time_udp_worker]},
-  {included_applications, [serlvers]},
-  {applications, [kernel, stdlib]},
-  {mod, {fanterlasticfour_app, []}},
-  {env, [{echoTCPPort, 7},
-         {echoUDPPort, 7},
-         {chargenTCPPort, 19},
-         {chargenUDPPort, 19},
-         {daytimeTCPPort, 13},
-         {daytimeUDPPort, 13},
-         {timeTCPPort, 37},
-         {timeUDPPort, 37},
-         {portOffset, 10000}]}]}.
+-module(chargen).
+-behaviour(gen_chargen).
+-export([start/0, start/1, start_link/0, start_link/1]).
+-export([init/1, chargen/1, terminate/2]).
+
+start() ->
+    %io:fwrite("~w:start()~n", [?MODULE]),
+    gen_daytime:start(?MODULE, [], []).
+
+start(SupName) ->
+    %io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
+    gen_daytime:start(SupName, ?MODULE, [], []).
+
+start_link() ->
+    %io:fwrite("~w:start_link()~n", [?MODULE]),
+    gen_daytime:start_link(?MODULE, [], []).
+
+start_link(SupName) ->
+    %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
+    gen_daytime:start_link(SupName, ?MODULE, [], []).
+
+%% Callbacks.
+init(_Args) ->
+    %io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    {ok, []}.
+    
+chargen(State) ->
+    %io:fwrite("~w:daytime()~n", [?MODULE]),
+    {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
+    DayTime = lists:flatten(
+		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
+			      [Year, Month, Day, Hours, Minutes, Seconds])),
+    {DayTime, State}.
+
+terminate(_Reason, _State) ->
+    %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
+    ok.

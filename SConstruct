@@ -10,7 +10,7 @@
 env = Environment(tools = ["default", "erlang"])
 
 # Configuration.
-configFile = ".Serlvers.conf"
+configFile = ".FanterlasticFour.conf"
 opts = Options(configFile)
 opts.Add(PathOption("PREFIX", "Prefix directory (where Erlang is installed)", "/usr/local/lib/erlang/"))
 opts.Update(env)
@@ -22,7 +22,9 @@ Help(opts.GenerateHelpText(env))
 beams = env.Erlang(["src/fanterlasticfour_app",
                     "src/fanterlasticfour_sup",
                     "src/echo",
-                    "src/daytime"], 
+                    "src/chargen",
+                    "src/daytime",
+                    "src/time"], 
                    OUTPUT="ebin/")
 
 # Install directories.
