@@ -17,7 +17,7 @@
 -export([start/2, stop/1]).
 
 start(_Type, _Args) ->
-    fanterlasticfour_sup:start_link(10007, 10007, 10013, 10013).
+    fanterlasticfour_sup:start_link().
 
 stop(_State) ->
     ok.

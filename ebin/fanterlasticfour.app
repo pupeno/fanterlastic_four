@@ -25,4 +25,13 @@
                 daytime_udp_worker]},
   {included_applications, [serlvers]},
   {applications, [kernel, stdlib]},
-  {mod, {fanterlasticfour_app, []}}]}.
+  {mod, {fanterlasticfour_app, []}},
+  {env, [{echoTCPPort, 7},
+         {echoUDPPort, 7},
+         {chargenTCPPort, 19},
+         {chargenUDPPort, 19},
+         {daytimeTCPPort, 13},
+         {daytimeUDPPort, 13},
+         {timeTCPPort, 37},
+         {timeUDPPort, 37},
+         {portOffset, 10000}]}]}.

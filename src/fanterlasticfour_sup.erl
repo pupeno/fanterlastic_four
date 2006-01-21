@@ -10,12 +10,12 @@
 
 -module(fanterlasticfour_sup).
 -behaviour(supervisor).
--export([start_link/4, stop/0, children/0]).
+-export([start_link/0, stop/0, children/0]).
 -export([init/1]).
 
-start_link(EchoUDPPort, EchoTCPPort, DaytimeUDPPort, DaytimeTCPPort) ->
-    %io:fwrite("~w:start_link(~w, ~w, ~w, ~w)~n", [?MODULE, EchoUDPPort, EchoTCPPort, DaytimeUDPPort, DaytimeTCPPort]),
-    supervisor:start_link({local, ?MODULE}, ?MODULE, {EchoUDPPort, EchoTCPPort, DaytimeUDPPort, DaytimeTCPPort}).
+start_link() ->
+    %io:fwrite("~w:start_link()~n", [?MODULE]),
+    supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 stop() ->
     case (whereis(echo_sup)) of
@@ -29,30 +29,39 @@ children() ->
     %io:fwrite("~w:which_children()~n", [?MODULE]),
     supervisor:which_children(?MODULE).
 
-init({EchoUDPPort, EchoTCPPort, DaytimeUDPPort, DaytimeTCPPort}) ->
-    %io:fwrite("~w:init(~w)~n", [?MODULE, {EchoUDPPort, EchoTCPPort, DaytimeUDPPort, DaytimeTCPPort}]),
+init(_Args) ->
+    %io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    {ok, EchoUDPPort} = application:get_env(echoUDPPort),
+    {ok, EchoTCPPort} = application:get_env(echoTCPPort),
+    {ok, ChargenUDPPort} = application:get_env(chargenUDPPort),
+    {ok, ChargenTCPPort} = application:get_env(chargenTCPPort),
+    {ok, DaytimeUDPPort} = application:get_env(daytimeUDPPort),
+    {ok, DaytimeTCPPort} = application:get_env(daytimeTCPPort),
+    {ok, TimeUDPPort} = application:get_env(timeUDPPort),
+    {ok, TimeTCPPort} = application:get_env(timeTCPPort),
+    {ok, PortOffset} = application:get_env(portOffset),
     {ok, {{one_for_one, 1, 5},
           [{echo_udp,
             {launcher, start_link, [{local, echo_udp_launcher},
                                     echo,
                                     udp,
-                                    EchoUDPPort]},
+                                    EchoUDPPort + PortOffset]},
             permanent, 1000, worker, [launcher]},
            {echo_tcp,
             {launcher, start_link, [{local, echo_tcp_launcher},
                                     echo,
                                     tcp,
-                                    EchoTCPPort]},
+                                    EchoTCPPort + PortOffset]},
             permanent, 1000, worker, [launcher]},
            {daytime_udp,
             {launcher, start_link, [{local, daytime_udp_launcher},
                                     daytime,
                                     udp,
-                                    DaytimeUDPPort]},
+                                    DaytimeUDPPort + PortOffset]},
             permanent, 1000, worker, [launcher]},
            {daytime_tcp,
             {launcher, start_link, [{local, daytime_tcp_launcher},
                                     daytime,
                                     tcp,
-                                    DaytimeTCPPort]},
+                                    DaytimeTCPPort + PortOffset]},
             permanent, 1000, worker, [launcher]}]}}.
