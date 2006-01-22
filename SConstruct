@@ -9,6 +9,9 @@
 
 env = Environment(tools = ["default", "erlang"], toolpath = ["../SConsErlang/"])
 
+# Use cache, erlang takes long to find dependencies.
+env.SetOption('implicit_cache', 1)
+
 # Configuration.
 configFile = ".FanterlasticFour.conf"
 opts = Options(configFile)
@@ -19,13 +22,15 @@ opts.Save(configFile, env)
 # Help.
 Help(opts.GenerateHelpText(env))
 
+sources = ["src/fanterlasticfour_app.erl",
+           "src/fanterlasticfour_sup.erl",
+           "src/echo.erl",
+           "src/chargen.erl",
+           "src/daytime.erl",
+           "src/time.erl"]
+
 # Compile the sources to .beams.
-beams = env.Erlang(["src/fanterlasticfour_app",
-                    "src/fanterlasticfour_sup",
-                    "src/echo",
-                    "src/chargen",
-                    "src/daytime",
-                    "src/time"])
+beams = env.Erlang(sources)
 
 # Generate the boot and script.
 bootScript = env.Erlang(["src/fanterlasticfour.rel"],
@@ -37,6 +42,7 @@ fanterlasticFourDir = "$PREFIX/lib/fanterlasticfour-0.0.0/"
 # chicken.py, no build needed.
 env.Install(fanterlasticFourDir + "ebin/", beams)
 env.Install(fanterlasticFourDir + "ebin/", "src/fanterlasticfour.app")
+env.Install(fanterlasticFourDir + "src/", sources)
 env.Install("$PREFIX/bin/", bootScript)
 
 # Alias for installing.
