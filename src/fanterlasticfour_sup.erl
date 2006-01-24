@@ -14,7 +14,7 @@
 -export([init/1]).
 
 start_link() ->
-    %io:fwrite("~w:start_link()~n", [?MODULE]),
+    %%io:fwrite("~w:start_link()~n", [?MODULE]),
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 stop() ->
@@ -26,11 +26,11 @@ stop() ->
     end.
 
 children() ->
-    %io:fwrite("~w:which_children()~n", [?MODULE]),
+    %%io:fwrite("~w:which_children()~n", [?MODULE]),
     supervisor:which_children(?MODULE).
 
 init(_Args) ->
-    %io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, EchoUDPPort} = application:get_env(echoUDPPort),
     {ok, EchoTCPPort} = application:get_env(echoTCPPort),
     {ok, ChargenUDPPort} = application:get_env(chargenUDPPort),

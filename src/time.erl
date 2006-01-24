@@ -48,5 +48,5 @@ time(State) ->
     {DayTime, State}.
 
 terminate(_Reason, _State) ->
-    %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
+    %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
