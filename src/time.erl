@@ -20,19 +20,19 @@
 
 start() ->
     %io:fwrite("~w:start()~n", [?MODULE]),
-    gen_daytime:start(?MODULE, [], []).
+    gen_time:start(?MODULE, [], []).
 
 start(SupName) ->
     %io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
-    gen_daytime:start(SupName, ?MODULE, [], []).
+    gen_time:start(SupName, ?MODULE, [], []).
 
 start_link() ->
     %io:fwrite("~w:start_link()~n", [?MODULE]),
-    gen_daytime:start_link(?MODULE, [], []).
+    gen_time:start_link(?MODULE, [], []).
 
 start_link(SupName) ->
     %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
-    gen_daytime:start_link(SupName, ?MODULE, [], []).
+    gen_time:start_link(SupName, ?MODULE, [], []).
 
 %% Callbacks.
 init(_Args) ->
@@ -40,13 +40,17 @@ init(_Args) ->
     {ok, []}.
     
 time(State) ->
-    %io:fwrite("~w:daytime()~n", [?MODULE]),
-    {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
-    DayTime = lists:flatten(
-		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
-			      [Year, Month, Day, Hours, Minutes, Seconds])),
-    {DayTime, State}.
+    %io:fwrite("~w:time(~w)~n", [?MODULE, State]),
+    Epoch1900 = {{1900, 01, 01}, {0, 0, 0}},
+    TimeSinceEpoch = calendar:time_difference(Epoch1900, calendar:universal_time()),
+    TimeInSeconds = timeToSeconds(TimeSinceEpoch),
+    SecondsAsString = lists:flatten(io_lib:format("~w", [TimeInSeconds])),
+    {SecondsAsString, State}.
 
 terminate(_Reason, _State) ->
     %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
+
+timeToSeconds({Days, {Hours, Minutes, Seconds}}) ->
+    %io:fwrite("~w:terminate(~w)~n", [?MODULE, {Days, {Hours, Minutes, Seconds}}]),
+    ((Days * 24 + Hours) * 60 + Minutes) * 60 + Seconds.
