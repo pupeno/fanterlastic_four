@@ -48,3 +48,5 @@ env.Install("$PREFIX/bin/", bootScript)
 # Alias for installing.
 env.Alias("install", "$PREFIX")
 
+# Documentation
+env.EDoc("doc/index.html", sources)

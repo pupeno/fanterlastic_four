@@ -12,8 +12,8 @@
 %% @copyright 2006 José Pablo Ezequiel "Pupeno" Fernández Silva
 %% @doc This is a daytime server implemented using gen_daytime of Serlvers (http://software.pupeno.com/Serlvers).
 %% @see echo
-%% @see time
 %% @see chargen
+%% @see time
 %% @since 0.0.0
 
 -module(daytime).
@@ -52,7 +52,7 @@ start_link() ->
     %io:fwrite("~w:start_link()~n", [?MODULE]),
     gen_daytime:start_link(?MODULE, [], []).
 
-%% @doc Start an unnamed daytime server.
+%% @doc Start a named daytime server.
 %% @see start/1
 %% @see start_link/0
 %% @since 0.0.0
@@ -63,7 +63,7 @@ start_link(SupName) ->
     %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
     gen_daytime:start_link(SupName, ?MODULE, [], []).
 
-%% @doc Start an unnamed daytime server.
+%% @doc Stop a process.
 %% @see start/0
 %% @see start/1
 %% @see start_link/0
