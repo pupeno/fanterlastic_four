@@ -20,15 +20,15 @@
 
 start() ->
     %io:fwrite("~w:start()~n", [?MODULE]),
-    gen_daytime:start(?MODULE, [], []).
+    gen_chargen:start(?MODULE, [], []).
 
 start(SupName) ->
     %io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
-    gen_daytime:start(SupName, ?MODULE, [], []).
+    gen_chargen:start(SupName, ?MODULE, [], []).
 
 start_link() ->
     %io:fwrite("~w:start_link()~n", [?MODULE]),
-    gen_daytime:start_link(?MODULE, [], []).
+    gen_chargen:start_link(?MODULE, [], []).
 
 start_link(SupName) ->
     %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
@@ -43,12 +43,12 @@ init(_Args) ->
     {ok, []}.
     
 chargen(State) ->
-    %io:fwrite("~w:daytime()~n", [?MODULE]),
+    %io:fwrite("~w:chargen()~n", [?MODULE]),
     {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
-    DayTime = lists:flatten(
+    Chargen = lists:flatten(
 		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
 			      [Year, Month, Day, Hours, Minutes, Seconds])),
-    {DayTime, State}.
+    {Chargen, State}.
 
 terminate(_Reason, _State) ->
     %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
