@@ -18,6 +18,7 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 stop() ->
+    %%io:fwrite("~w:stop()~n", [?MODULE]),
     case (whereis(echo_sup)) of
         undefined ->
             {ok, echo_sup_not_running};

@@ -19,33 +19,34 @@
 -export([init/1, echo/2, terminate/2]).
 
 start() ->
-    io:fwrite("~w:start()~n", [?MODULE]),
+    %%io:fwrite("~w:start()~n", [?MODULE]),
     gen_echo:start(?MODULE, [], []).
 
 start(SupName) ->
-    io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
+    %%io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
     gen_echo:start(SupName, ?MODULE, [], []).
 
 start_link() ->
-    io:fwrite("~w:start_link()~n", [?MODULE]),
+    %%io:fwrite("~w:start_link()~n", [?MODULE]),
     gen_echo:start_link(?MODULE, [], []).
 
 start_link(SupName) ->
-    io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
+    %%io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
     gen_echo:start_link(SupName, ?MODULE, [], []).
 
 stop(Process) ->
+    %%io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
     gen_echo:stop(Process).
 
 %% Callbacks.
 init(_Args) ->
-    io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, []}.
     
 echo(Data, State) ->
-    io:fwrite("~w:echo(~w)~n", [?MODULE, Data]),
+    %%io:fwrite("~w:echo(~w)~n", [?MODULE, Data]),
     {string:concat("You said: ", Data), State}.
 
 terminate(Reason, State) ->
-    io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
+    %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
     ok.
