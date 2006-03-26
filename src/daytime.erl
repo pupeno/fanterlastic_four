@@ -10,43 +10,92 @@
 
 %% @author José Pablo Ezequiel "Pupeno" Fernández Silva <pupeno@pupeno.com> [http://pupeno.com]
 %% @copyright 2006 José Pablo Ezequiel "Pupeno" Fernández Silva
-%% @doc TODO: write documentation.
-%% @see gen_echo.
+%% @doc This is a daytime server implemented using gen_daytime of Serlvers (http://software.pupeno.com/Serlvers).
+%% @see echo
+%% @see time
+%% @see chargen
+%% @since 0.0.0
 
 -module(daytime).
 -behaviour(gen_daytime).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
 -export([init/1, daytime/1, terminate/2]).
 
+%% @doc Start an unnamed daytime server.
+%% @see start/1
+%% @see start_link/0
+%% @since 0.0.0
+%% @spec () -> Result
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start() ->
-    %%io:fwrite("~w:start()~n", [?MODULE]),
-    gen_daytime:start(?MODULE, [], []).
+    %io:fwrite("~w:start()~n", [?MODULE]),
+    gen_daytime:start(?MODULE, a, []).
 
+%% @doc Start a named daytime server.
+%% @see start/0
+%% @see start_link/1
+%% @since 0.0.0
+%% @spec (SupName) -> Result
+%%   SupName = {local, atom()} | {global, atom()}
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start(SupName) ->
-    %%io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
+    %io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
     gen_daytime:start(SupName, ?MODULE, [], []).
 
+%% @doc Start an unnamed daytime server.
+%% @see start/0
+%% @see start_link/1
+%% @since 0.0.0
+%% @spec () -> Result
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start_link() ->
-    %%io:fwrite("~w:start_link()~n", [?MODULE]),
+    %io:fwrite("~w:start_link()~n", [?MODULE]),
     gen_daytime:start_link(?MODULE, [], []).
 
+%% @doc Start an unnamed daytime server.
+%% @see start/1
+%% @see start_link/0
+%% @since 0.0.0
+%% @spec (SupName) -> Result
+%%   SupName = {local, atom()} | {global, atom()}
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start_link(SupName) ->
-    %%io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
+    %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
     gen_daytime:start_link(SupName, ?MODULE, [], []).
 
-%% Callbacks.
+%% @doc Start an unnamed daytime server.
+%% @see start/0
+%% @see start/1
+%% @see start_link/0
+%% @see start_link/1
+%% @since 0.0.0
+%% @spec (Name) -> ok
+%%   Name = atom() | {local, atom()} | {global, atom()}
+stop(Process) ->
+    %io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
+    gen_daytime:stop(Process).
+
+%% @doc Initialize the daytime server... nothing really.
+%% @private Only gen_daytime should call this function.
+%% @since 0.0.0
 init(_Args) ->
-    %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    %io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, []}.
-    
+
+%% @doc The main function, generates and returns the daytime.
+%% @private Only gen_daytime should call this function.
+%% @since 0.0.0 
 daytime(State) ->
-    %%io:fwrite("~w:daytime()~n", [?MODULE]),
+    %io:fwrite("~w:daytime()~n", [?MODULE]),
     {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
     DayTime = lists:flatten(
 		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
 			      [Year, Month, Day, Hours, Minutes, Seconds])),
     {DayTime, State}.
 
+%% @doc Clean up.
+%% @private Only gen_daytime should call this function.
+%% @since 0.0.0
 terminate(_Reason, _State) ->
-    %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
+    %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
