@@ -15,7 +15,7 @@
 
 -module(chargen).
 -behaviour(gen_chargen).
--export([start/0, start/1, start_link/0, start_link/1]).
+-export([start/0, start/1, start_link/0, start_link/1, stop/1]).
 -export([init/1, chargen/1, terminate/2]).
 
 start() ->
@@ -32,7 +32,10 @@ start_link() ->
 
 start_link(SupName) ->
     %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
-    gen_daytime:start_link(SupName, ?MODULE, [], []).
+    gen_chargen:start_link(SupName, ?MODULE, [], []).
+
+stop(Process) ->
+    gen_chargen:stop(Process).
 
 %% Callbacks.
 init(_Args) ->
