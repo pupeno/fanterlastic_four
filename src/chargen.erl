@@ -16,40 +16,64 @@
 -module(chargen).
 -behaviour(gen_chargen).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
--export([init/1, chargen/1, terminate/2]).
+-export([init/1, chargen/2, terminate/2]).
+-export([circular_sublist/3]). % TODO: delme.
+
+-define(posChars, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~").
+                                                % Possible characters.
+-define(lineLength, 71).
 
 start() ->
-    %io:fwrite("~w:start()~n", [?MODULE]),
+    io:fwrite("~w:start()~n", [?MODULE]),
     gen_chargen:start(?MODULE, [], []).
 
 start(SupName) ->
-    %io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
+    io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
     gen_chargen:start(SupName, ?MODULE, [], []).
 
 start_link() ->
-    %io:fwrite("~w:start_link()~n", [?MODULE]),
+    io:fwrite("~w:start_link()~n", [?MODULE]),
     gen_chargen:start_link(?MODULE, [], []).
 
 start_link(SupName) ->
-    %io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
+    io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
     gen_chargen:start_link(SupName, ?MODULE, [], []).
 
 stop(Process) ->
+    io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
     gen_chargen:stop(Process).
 
-%% Callbacks.
 init(_Args) ->
-    %io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
-    {ok, []}.
+    io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    {ok, [0]}.
     
-chargen(State) ->
-    %io:fwrite("~w:chargen()~n", [?MODULE]),
-    {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
-    Chargen = lists:flatten(
-		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
-			      [Year, Month, Day, Hours, Minutes, Seconds])),
-    {Chargen, State}.
+chargen(udp, State) ->
+    io:fwrite("~w:chargen(udp, ~w)~n", [?MODULE, State]),
+    Chargen = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ",
+    {Chargen, State};
+chargen(tcp, [Position]) ->
+    io:fwrite("~w:chargen(tcp, [~w])~n", [?MODULE, Position]),
+    Chargen = lists:append(circular_sublist(?posChars, Position, ?lineLength), "\n"),
+    LastChar = length(?posChars) - 1,
+    NewPosition = if Position >= LastChar  -> 0;
+                     Position < LastChar -> Position + 1
+                  end,
+    {Chargen, [NewPosition]}.
 
 terminate(_Reason, _State) ->
-    %io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
+    io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
+
+circular_sublist(List, Start, Length) ->
+    %%io:fwrite("~w:circular_sublist(~w, ~w, ~w)~n", [?MODULE, List, Start, Length]),
+    if
+        Start < 0; Start >= length(List) ->
+            error;
+        Start + Length =< length(List) ->
+            lists:sublist(List, Start + 1, Length); % Start + 1 because sublist considers the first item of a list to be 1, not 0.
+        Start + Length > length(List) ->
+            Rest = Length - (length(List) - Start), % Rest of items to return.
+            lists:append(lists:nthtail(Start, List), 
+                         circular_sublist(List, 0, Rest))
+    end.
+   

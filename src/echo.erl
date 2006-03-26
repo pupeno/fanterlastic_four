@@ -92,6 +92,6 @@ echo(Data, State) ->
 %% @doc Clean up.
 %% @private Only gen_echo should call this function.
 %% @since 0.0.0
-terminate(Reason, State) ->
-    %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, Reason, State]),
+terminate(_Reason, _State) ->
+    %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
