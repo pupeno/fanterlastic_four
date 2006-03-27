@@ -87,7 +87,8 @@ init(_Args) ->
 %% @since 0.0.0
 echo(Data, State) ->
     %%io:fwrite("~w:echo(~w)~n", [?MODULE, Data]),
-    {string:concat("You said: ", Data), State}.
+    %% {string:concat("You said: ", Data), State}. % Funnier version, but non-compliant.
+    {Data, State}.
 
 %% @doc Clean up.
 %% @private Only gen_echo should call this function.
