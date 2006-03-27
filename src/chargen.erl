@@ -10,42 +10,84 @@
 
 %% @author José Pablo Ezequiel "Pupeno" Fernández Silva <pupeno@pupeno.com> [http://pupeno.com]
 %% @copyright 2006 José Pablo Ezequiel "Pupeno" Fernández Silva
-%% @doc TODO: write documentation.
-%% @see gen_echo.
+%% @doc This is a chargen server implemented using gen_chargen of Serlvers (http://software.pupeno.com/Serlvers).
+%% @see echo
+%% @see daytime
+%% @see time
+%% @since 0.0.0
 
 -module(chargen).
 -behaviour(gen_chargen).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
 -export([init/1, chargen/2, terminate/2]).
 
--define(posChars, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~").
-                                                % Possible characters.
--define(lineLength, 71).                        % Length of the line to send.
+-define(posChars, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"). % Possible characters.
+-define(lineLength, 71). % Length of the line to send.
 
+%% @doc Start an unnamed chargen server.
+%% @see start/1
+%% @see start_link/0
+%% @since 0.0.0
+%% @spec () -> Result
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start() ->
     %%io:fwrite("~w:start()~n", [?MODULE]),
     gen_chargen:start(?MODULE, [], []).
 
+%% @doc Start a named chargen server.
+%% @see start/0
+%% @see start_link/1
+%% @since 0.0.0
+%% @spec (SupName) -> Result
+%%   SupName = {local, atom()} | {global, atom()}
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start(SupName) ->
     %%io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
     gen_chargen:start(SupName, ?MODULE, [], []).
 
+%% @doc Start an unnamed chargen server.
+%% @see start/0
+%% @see start_link/1
+%% @since 0.0.0
+%% @spec () -> Result
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start_link() ->
     %%io:fwrite("~w:start_link()~n", [?MODULE]),
     gen_chargen:start_link(?MODULE, [], []).
 
+%% @doc Start a named chargen server.
+%% @see start/1
+%% @see start_link/0
+%% @since 0.0.0
+%% @spec (SupName) -> Result
+%%   SupName = {local, atom()} | {global, atom()}
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start_link(SupName) ->
     %%io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
     gen_chargen:start_link(SupName, ?MODULE, [], []).
 
+%% @doc Stop a process.
+%% @see start/0
+%% @see start/1
+%% @see start_link/0
+%% @see start_link/1
+%% @since 0.0.0
+%% @spec (Name) -> ok
+%%   Name = atom() | {local, atom()} | {global, atom()}
 stop(Process) ->
     %%io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
     gen_chargen:stop(Process).
 
+%% @doc Initialize the chargen server... nothing really.
+%% @private Only gen_chargen should call this function.
+%% @since 0.0.0
 init(_Args) ->
     %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, [0]}.
     
+%% @doc The main function, generates and returns the characters.
+%% @private Only gen_chargen should call this function.
+%% @since 0.0.0 
 chargen(udp, State) ->
     %%io:fwrite("~w:chargen(udp, ~w)~n", [?MODULE, State]),
     DatagramLength = random:uniform(513) - 1,
@@ -60,6 +102,9 @@ chargen(tcp, [Position]) ->
                   end,
     {Chargen, [NewPosition]}.
 
+%% @doc Clean up.
+%% @private Only gen_chargen should call this function.
+%% @since 0.0.0
 terminate(_Reason, _State) ->
     %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
