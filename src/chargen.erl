@@ -117,17 +117,3 @@ circular_sublist(List, Start, Length) when Start + Length > length(List) ->
     Rest = Length - (length(List) - Start), % Rest of items to return.
     lists:append(lists:nthtail(Start, List), 
                  circular_sublist(List, 0, Rest)).
-   
-%% @doc Generate a set of circular sublists.
-%% <p>Each of them with a length of LineLength for a total length of TotalLength including the line jumps that separate the lines starting at Start taking the elements out of List.</p>
-gen_cir_sublists(_List, _LineLength, 0, _Start) ->
-    %%io:fwrite("~w:gen_cir_sublists(~w, ~w, 0, ~w)~n", [?MODULE, _List, _LineLength, _Start]),
-    "";
-gen_cir_sublists(List, LineLength, TotalLength, Start) when TotalLength < LineLength ->
-    %%io:fwrite("~w:gen_cir_sublists(~w, ~w, ~w, ~w)~n", [?MODULE, List, LineLength, TotalLength, Start]),
-    lists:append(circular_sublist(List, Start, TotalLength), "\n");
-gen_cir_sublists(List, LineLength, TotalLength, Start) when TotalLength >= LineLength ->
-    %%io:fwrite("~w:gen_cir_sublists(~w, ~w, ~w, ~w)~n", [?MODULE, List, LineLength, TotalLength, Start]),
-    lists:append([circular_sublist(List, Start, LineLength),
-                  "\n",
-                  gen_cir_sublists(List, LineLength, TotalLength - LineLength - 1, Start + 1)]). % - 1 because of the line jumps.
