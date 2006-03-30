@@ -19,7 +19,7 @@
 -module(chargen).
 -behaviour(gen_chargen).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
--export([init/1, chargen/2, terminate/2]).
+-export([init/1, chargen/1, terminate/2]).
 
 -define(posChars, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"). % Possible characters.
 -define(lineLength, 71). % Length of the line to send.
@@ -88,13 +88,8 @@ init(_Args) ->
 %% @doc The main function, generates and returns the characters.
 %% @private Only gen_chargen should call this function.
 %% @since 0.0.0 
-chargen(udp, State) ->
-    %%io:fwrite("~w:chargen(udp, ~w)~n", [?MODULE, State]),
-    DatagramLength = random:uniform(513) - 1,
-    Chargen = gen_cir_sublists(?posChars, ?lineLength, DatagramLength, 0),
-    {Chargen, State};
-chargen(tcp, [Position]) ->
-    %%io:fwrite("~w:chargen(tcp, [~w])~n", [?MODULE, Position]),
+chargen([Position]) ->
+    %%io:fwrite("~w:chargen([~w])~n", [?MODULE, Position]),
     Chargen = lists:append(circular_sublist(?posChars, Position, ?lineLength), "\n"),
     LastChar = length(?posChars) - 1,
     NewPosition = if Position >= LastChar  -> 0;
