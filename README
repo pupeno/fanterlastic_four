@@ -1,0 +1,94 @@
+Fanterlastic Four 0.0.0
+=======================
+
+Fanterlastic Four is a proof of concept of how Serlvers is used to provide four very basic services.
+
+These services are:
+
+- `Echo (RFC862) <http://www.ietf.org/rfc/rfc862.txt>`__
+- `Chargen (RFC864) <http://www.ietf.org/rfc/rfc864.txt>`__
+- `Daytime (RFC867) <http://www.ietf.org/rfc/rfc867.txt>`__
+- `Time (RFC868) <http://www.ietf.org/rfc/rfc868.txt>`__
+
+They are a bit useless but they are good example (because they are very simple).
+
+Getting
+-------
+
+You can find the lattest version of Fanterlastic Four on http://pupeno.com/software/fanterlastic-four
+
+Requirements
+------------
+
+Here I list what I use, but other versions, newer and older, may work. I am interested in knowing either case, working or not to try to fix them and/or list them:
+
+- `Python <http://python.org>`__ 2.4.2
+- `SCons <http://scons.org>`__ 0.96.1
+- `Erlang/OTP <http://erlang.org>`__ R10B-10
+- `Serlvers <http://pupeno.com/software/serlvers>`__ Unreleased
+
+Installation
+------------
+
+SCons is used to compile and install this package.
+
+First check out the variables you need to set by running::
+
+  scons --help
+
+You'll need to set PREFIX, the prefix directory (where Erlang is installed, it contains something like: bin erts-5.4.13 Install lib misc releases usr) and at the same time you set it, it'll compile.
+
+Then run::
+  
+  scons install
+
+to install. You might need sudo or su to reach superuser capabilities.
+
+For example::
+
+  $ scons PREFIX=/usr/lib/erlang/
+  scons: Reading SConscript files ...
+  scons: done reading SConscript files.
+  scons: Building targets ...
+  erl -noshell -run edoc_run files '["src/fanterlasticfour_app.erl","src/fanterlasticfour_sup.erl","src/echo.erl","src/chargen.erl","src/daytime.erl","src/time.erl"]' '[{dir, "doc/"}]' -run init stop
+  erlc -o src/ src/chargen.erl
+  erlc -o src/ src/daytime.erl
+  erlc -o src/ src/echo.erl
+  erlc -o src/ src/fanterlasticfour_app.erl
+  erlc -o src/ src/fanterlasticfour_sup.erl
+  erlc -o src/ -I src/ src/fanterlasticfour.rel
+  erlc -o src/ src/time.erl
+  scons: done building targets.
+  $ sudo scons install
+  scons: Reading SConscript files ...
+  scons: done reading SConscript files.
+  scons: Building targets ...
+  Install file: "src/fanterlasticfour.boot" as "/usr/lib/erlang/bin/fanterlasticfour.boot"
+  Install file: "src/fanterlasticfour.script" as "/usr/lib/erlang/bin/fanterlasticfour.script"
+  Install file: "src/chargen.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/chargen.beam"
+  Install file: "src/daytime.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/daytime.beam"
+  Install file: "src/echo.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/echo.beam"
+  Install file: "src/fanterlasticfour.app" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/fanterlasticfour.app"
+  Install file: "src/fanterlasticfour_app.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/fanterlasticfour_app.beam"
+  Install file: "src/fanterlasticfour_sup.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/fanterlasticfour_sup.beam"
+  Install file: "src/time.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/time.beam"
+  Install file: "src/chargen.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/chargen.erl"
+  Install file: "src/daytime.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/daytime.erl"
+  Install file: "src/echo.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/echo.erl"
+  Install file: "src/fanterlasticfour_app.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/fanterlasticfour_app.erl"
+  Install file: "src/fanterlasticfour_sup.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/fanterlasticfour_sup.erl"
+  Install file: "src/time.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/time.erl"
+  scons: done building targets.
+  $
+
+Development
+-----------
+
+You can download the development version that is updated to the minute. This version is unstable, it might not even work. To download it you have to use `Darcs <http://darcs.net>`__ and run::
+
+  darcs get http://software.pupeno.com/FanterlasticFour
+
+Contact
+-------
+
+To contact the author go to http://pupeno.com/contact
