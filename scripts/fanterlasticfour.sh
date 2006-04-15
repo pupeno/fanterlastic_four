@@ -22,7 +22,7 @@ ERL_CALL="/usr/bin/erl_call"
 
 ACTION="start"
 VERBOSE=0
-CONFIGFILE="/etc/fanterlasticfour/scriptconfig"
+CONFIGFILE="/etc/fanterlasticfour/fanterlasticfour.sh"
 
 while getopts ":a:c:v" Option 
   do
