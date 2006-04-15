@@ -40,4 +40,4 @@
          {daytimeUDPPort, 13},
          {timeTCPPort, 37},
          {timeUDPPort, 37},
-         {portOffset, 10000}]}]}.
+         {portOffset, 0}]}]}.
