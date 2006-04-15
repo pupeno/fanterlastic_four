@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Exit reasons:
+# 0: Success
+# 1: Unrecognized option.
+# 2: Unrecognized action (should be either "start" or "stop").
+# 3: Can't start, already runnig (or so it seems).
+# 4: Can't stop, not running (or so it seems).
+
 #==============================================================
 #Defaults, can be customized in CONFIGFILE
 NAME="fanterlasticfour"
@@ -14,10 +21,10 @@ ERL_CALL="/usr/bin/erl_call"
 #==============================================================
 
 ACTION="start"
-VERBOSE=false
+VERBOSE=0
 CONFIGFILE="/etc/fanterlasticfour/scriptconfig"
 
-while getopts ":a:c:" Option 
+while getopts ":a:c:v" Option 
   do
   case $Option in
       a)
@@ -26,6 +33,9 @@ while getopts ":a:c:" Option
       c)
 	  CONFIGFILE="$OPTARG"
 	  ;;
+      v)
+	  VERBOSE=1
+	  ;;
       *)
 	  echo "Unrecognized option."
 	  exit 1;
@@ -33,28 +43,60 @@ while getopts ":a:c:" Option
   esac
 done
 
-source $CONFIGFILE
+if [ -r $CONFIGFILE ] ; then
+    source $CONFIGFILE
+else
+    echo "WARNING: could not read config file $CONFIGFILE. Continuing with defaults."
+fi
 
 case "$ACTION" in
     "start")
-	echo "Starting."
+	if [[ $VERBOSE ]] ; then
+	    echo "Starting."
+	    # Echo the line.
+	    echo "$RUN_ERL -daemon $PIPEDIR $LOGDIR \"$ERL -sname $NAME -boot fanterlasticfour\""
+	fi
+
+        # Are we (likely to be) already running ?
+	if [ -e $NAMEFILE ] ; then
+	    echo "ERROR: File $NAMEFILE exists. Probably you have another Fanterlastic Four instance running. Aborting."
+	    exit 3
+	fi
+
 	# Save the name for future reference.
-	# TODO: Check that $NAMEFILE doesn't exist, otherwise, abort.
 	echo "$NAME" > $NAMEFILE
-	# Echo the line.
-	echo "$RUN_ERL -daemon $PIPEDIR $LOGDIR \"$ERL -sname $NAME -boot fanterlasticfour\""
+
 	# Run Fanterlastic Four.
 	$RUN_ERL -daemon $PIPEDIR $LOGDIR "$ERL -sname $NAME -boot fanterlasticfour"
-	echo "Done."
+
+	if [[ $VERBOSE ]] ; then
+	    echo "Done."
+	fi
 	;;
+
     "stop")
-	echo "Stoping."
-	# Get the name of the node we want to stop.
-	# TODO: Check that $NAMEFILE exists, otherwise, abort.
-	$NAME=$(cat $NAMEFILE)
-	echo "$ERL_CALL -sname $NAME -a \"init stop\""
-	$ERL_CALL -sname $NAME -a "init stop"
-	echo "Done."
+	if [[ $VERBOSE ]] ; then
+	    echo "Stoping."
+	    echo "$ERL_CALL -sname $NAME -a \"init stop\""
+	fi
+	
+	if [ -r $NAMEFILE ] ; then
+            # Get the name of the node we want to stop.
+	    NAME=$(cat $NAMEFILE)
+
+	    # Stop Fanterlastic Four.
+	    $ERL_CALL -sname $NAME -a "init stop"
+
+	    # Remove the name file.
+	    rm $NAMEFILE
+	else
+	    echo "ERROR: File $NAMEFILE doesn't exist or is not readable. Aborting."
+	    exit 4
+	fi
+	
+	if [[ $VERBOSE ]] ; then
+	    echo "Done."
+	fi
 	;;
     *)
 	echo "Action should be either \"start\" or \"stop\"."
