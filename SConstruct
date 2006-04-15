@@ -13,9 +13,11 @@ env = Environment(tools = ["default", "erlang"])
 env.SetOption('implicit_cache', 1)
 
 # Configuration.
-configFile = ".FanterlasticFour.conf"
+configFile = ".fanterlasticfour.conf"
 opts = Options(configFile)
-opts.Add(PathOption("PREFIX", "Prefix directory (where Erlang is installed)", "/usr/local/lib/erlang/"))
+opts.Add(PathOption("ERLANGPREFIX", "Erlang prefix directory (where Erlang is installed)", "/usr/local/lib/erlang/"))
+opts.Add(PathOption("CONFIGPREFIX", "Config prefix directory", "/usr/local/etc/"))
+opts.Add(PathOption("BINPREFIX", "Binaries prefix directory", "/usr/local/bin/"))
 opts.Update(env)
 opts.Save(configFile, env)
 
@@ -37,16 +39,21 @@ bootScript = env.Erlang(["src/fanterlasticfour.rel"],
                         LIBPATH="src/")
 
 # Install directories.
-fanterlasticFourDir = "$PREFIX/lib/fanterlasticfour-0.0.0/"
+fanterlasticFourDir = "$ERLANGPREFIX/lib/fanterlasticfour-0.0.0/"
+configDir = "$CONFIGPREFIX/fanterlasticfour/"
+binDir = "$BINPREFIX"
 
-# chicken.py, no build needed.
+# Install files
 env.Install(fanterlasticFourDir + "ebin/", beams)
 env.Install(fanterlasticFourDir + "ebin/", "src/fanterlasticfour.app")
 env.Install(fanterlasticFourDir + "src/", sources)
-env.Install("$PREFIX/bin/", bootScript)
+env.Install("$ERLANGPREFIX/bin/", bootScript)
+env.Install(configDir, "configs/fanterlasticfour.sh")
+env.Install(configDir, "configs/fanterlasticfour.config")
+env.InstallAs(binDir + "/fanterlasticfour", "scripts/fanterlasticfour.sh")
 
 # Alias for installing.
-env.Alias("install", "$PREFIX")
+env.Alias("install", "$ERLANGPREFIX")
 
 # Documentation
 env.EDoc("doc/index.html", sources)
