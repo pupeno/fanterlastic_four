@@ -34,7 +34,7 @@
 \.script
 \.boot
 \.sconsign
-\.FanterlasticFour.conf
+\.fanterlasticfour.conf
 \.directory
 doc/edoc-info
 doc/.*\.html
