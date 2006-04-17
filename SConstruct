@@ -39,7 +39,9 @@ bootScript = env.Erlang(["src/fanterlasticfour.rel"],
                         LIBPATH="src/")
 
 # Generate the start script.
-env.Command('scripts/fanterlasticfour', 'scripts/fanterlasticfour.sh', "sed 's|____CONFIGPREFIX____|$CONFIGPREFIX|' < $SOURCE > $TARGET")
+env.Command('scripts/fanterlasticfour', 'scripts/fanterlasticfour.sh',
+            ["sed 's|____CONFIGPREFIX____|$CONFIGPREFIX|' < $SOURCE > $TARGET",
+             Chmod('$TARGET', 0755)])
 
 # Install directories.
 fanterlasticFourDir = "$ERLANGPREFIX/lib/fanterlasticfour-0.0.0/"
