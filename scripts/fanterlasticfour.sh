@@ -53,7 +53,7 @@ fi
 
 case "$ACTION" in
     "start")
-	if [[ $VERBOSE ]] ; then
+	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Starting."
 	    # Echo the line.
 	    echo "$RUN_ERL -daemon $PIPEDIR $LOGDIR \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
@@ -71,13 +71,13 @@ case "$ACTION" in
 	# Run Fanterlastic Four.
 	$RUN_ERL -daemon $PIPEDIR $LOGDIR "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
 
-	if [[ $VERBOSE ]] ; then
+	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Done."
 	fi
 	;;
 
     "stop")
-	if [[ $VERBOSE ]] ; then
+	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Stoping."
 	    echo "$ERL_CALL -sname $NAME -a \"init stop\""
 	fi
@@ -96,7 +96,7 @@ case "$ACTION" in
 	    exit 4
 	fi
 	
-	if [[ $VERBOSE ]] ; then
+	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Done."
 	fi
 	;;
