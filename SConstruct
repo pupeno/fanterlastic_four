@@ -38,9 +38,6 @@ beams = env.Erlang(sources)
 bootScript = env.Erlang(["src/fanterlasticfour.rel"],
                         LIBPATH="src/")
 
-def slashScape(s):
-    """ Add a backslash before every slash to scape a path for using it with sed."""
-    
 # Generate the start script.
 env.Command('scripts/fanterlasticfour', 'scripts/fanterlasticfour.sh', "sed 's|____CONFIGPREFIX____|$CONFIGPREFIX|' < $SOURCE > $TARGET")
 
