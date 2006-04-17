@@ -38,6 +38,12 @@ beams = env.Erlang(sources)
 bootScript = env.Erlang(["src/fanterlasticfour.rel"],
                         LIBPATH="src/")
 
+def slashScape(s):
+    """ Add a backslash before every slash to scape a path for using it with sed."""
+    
+# Generate the start script.
+env.Command('scripts/fanterlasticfour', 'scripts/fanterlasticfour.sh', "sed 's|____CONFIGPREFIX____|$CONFIGPREFIX|' < $SOURCE > $TARGET")
+
 # Install directories.
 fanterlasticFourDir = "$ERLANGPREFIX/lib/fanterlasticfour-0.0.0/"
 configDir = "$CONFIGPREFIX/fanterlasticfour/"
@@ -50,10 +56,12 @@ env.Install(fanterlasticFourDir + "src/", sources)
 env.Install("$ERLANGPREFIX/bin/", bootScript)
 env.Install(configDir, "configs/fanterlasticfour.sh")
 env.Install(configDir, "configs/fanterlasticfour.config")
-env.InstallAs(binDir + "/fanterlasticfour", "scripts/fanterlasticfour.sh")
+env.Install(binDir, "scripts/fanterlasticfour")
 
 # Alias for installing.
 env.Alias("install", "$ERLANGPREFIX")
+env.Alias("install", "$CONFIGPREFIX")
+env.Alias("install", "$BINPREFIX")
 
 # Documentation
 env.EDoc("doc/index.html", sources)
