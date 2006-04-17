@@ -39,3 +39,5 @@
 doc/edoc-info
 doc/.*\.html
 doc/.*\.css
+erl_crash.dump
+scripts/fanterlasticfour
