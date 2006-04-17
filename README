@@ -30,6 +30,8 @@ Here I list what I use, but other versions, newer and older, may work. I am inte
 Installation
 ------------
 
+TODO: Outdated, rewrite!!!!!!!!!!!!!!!!!!
+
 SCons is used to compile and install this package.
 
 First check out the variables you need to set by running::
