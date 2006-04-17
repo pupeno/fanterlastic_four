@@ -20,9 +20,11 @@ RUN_ERL="/usr/bin/run_erl"
 ERL_CALL="/usr/bin/erl_call"
 #==============================================================
 
+CONFIGPREFIX="____CONFIGPREFIX____"
+
 ACTION="start"
 VERBOSE=0
-CONFIGFILE="/etc/fanterlasticfour/fanterlasticfour.sh"
+CONFIGFILE="$CONFIGPREFIX/fanterlasticfour/fanterlasticfour.sh"
 
 while getopts ":a:c:v" Option 
   do
