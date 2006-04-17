@@ -87,7 +87,7 @@ case "$ACTION" in
 	    NAME=$(cat $NAMEFILE)
 
 	    # Stop Fanterlastic Four.
-	    $ERL_CALL -sname $NAME -a "init stop"
+	    $ERL_CALL -sname $NAME -a "init stop" &> /dev/null
 
 	    # Remove the name file.
 	    rm $NAMEFILE
