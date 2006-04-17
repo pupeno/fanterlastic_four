@@ -56,7 +56,7 @@ case "$ACTION" in
 	if [[ $VERBOSE ]] ; then
 	    echo "Starting."
 	    # Echo the line.
-	    echo "$RUN_ERL -daemon $PIPEDIR $LOGDIR \"$ERL -sname $NAME -boot fanterlasticfour\""
+	    echo "$RUN_ERL -daemon $PIPEDIR $LOGDIR \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
 	fi
 
         # Are we (likely to be) already running ?
@@ -69,7 +69,7 @@ case "$ACTION" in
 	echo "$NAME" > $NAMEFILE
 
 	# Run Fanterlastic Four.
-	$RUN_ERL -daemon $PIPEDIR $LOGDIR "$ERL -sname $NAME -boot fanterlasticfour"
+	$RUN_ERL -daemon $PIPEDIR $LOGDIR "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
 
 	if [[ $VERBOSE ]] ; then
 	    echo "Done."
