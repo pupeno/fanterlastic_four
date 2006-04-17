@@ -14,7 +14,7 @@
 
 {application, fanterlasticfour,
  [{description, "Fanterlastic Four provides the four fantastic services: Echo (RFC862), Character Generator (RFC864), Daytime (RFC867),  and Time (RFC868)."},
-  {vsn, "0.0.0"},
+  {vsn, "0.1.0"},
   {modules, [fanterlasticfour_app, fanterlasticfour_sup, echo, chargen, daytime]},
   {registered, [fanterlasticfour_sup, 
                 echo_tcp_launcher,

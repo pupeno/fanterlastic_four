@@ -1,4 +1,4 @@
-Fanterlastic Four 0.0.0
+Fanterlastic Four 0.1.0
 =======================
 
 Fanterlastic Four is a proof of concept of how Serlvers is used to provide four very basic services.
@@ -67,19 +67,19 @@ For example::
   scons: Building targets ...
   Install file: "src/fanterlasticfour.boot" as "/usr/lib/erlang/bin/fanterlasticfour.boot"
   Install file: "src/fanterlasticfour.script" as "/usr/lib/erlang/bin/fanterlasticfour.script"
-  Install file: "src/chargen.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/chargen.beam"
-  Install file: "src/daytime.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/daytime.beam"
-  Install file: "src/echo.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/echo.beam"
-  Install file: "src/fanterlasticfour.app" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/fanterlasticfour.app"
-  Install file: "src/fanterlasticfour_app.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/fanterlasticfour_app.beam"
-  Install file: "src/fanterlasticfour_sup.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/fanterlasticfour_sup.beam"
-  Install file: "src/time.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/ebin/time.beam"
-  Install file: "src/chargen.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/chargen.erl"
-  Install file: "src/daytime.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/daytime.erl"
-  Install file: "src/echo.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/echo.erl"
-  Install file: "src/fanterlasticfour_app.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/fanterlasticfour_app.erl"
-  Install file: "src/fanterlasticfour_sup.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/fanterlasticfour_sup.erl"
-  Install file: "src/time.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.0.0/src/time.erl"
+  Install file: "src/chargen.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/chargen.beam"
+  Install file: "src/daytime.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/daytime.beam"
+  Install file: "src/echo.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/echo.beam"
+  Install file: "src/fanterlasticfour.app" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/fanterlasticfour.app"
+  Install file: "src/fanterlasticfour_app.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/fanterlasticfour_app.beam"
+  Install file: "src/fanterlasticfour_sup.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/fanterlasticfour_sup.beam"
+  Install file: "src/time.beam" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/ebin/time.beam"
+  Install file: "src/chargen.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/src/chargen.erl"
+  Install file: "src/daytime.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/src/daytime.erl"
+  Install file: "src/echo.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/src/echo.erl"
+  Install file: "src/fanterlasticfour_app.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/src/fanterlasticfour_app.erl"
+  Install file: "src/fanterlasticfour_sup.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/src/fanterlasticfour_sup.erl"
+  Install file: "src/time.erl" as "/usr/lib/erlang/lib/fanterlasticfour-0.1.0/src/time.erl"
   scons: done building targets.
   $
 

@@ -36,7 +36,7 @@
       <li>Stdlib 1.10: At least this version is required since behaviour_info/1 is used. This is part of Erlang.</li>
     </ul>
   </li>
-  <li>Serlvers 0.0.0</li>
+  <li>Serlvers 0.1.0</li>
   <li>SCons 0.96.1: Older versions might work. This is a build system, a replacement for make and autotools.</li>
   <li>SConsErlang: This is a module for SCons to build Erlang projects.</li>
 </ul>

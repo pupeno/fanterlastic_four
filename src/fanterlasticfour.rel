@@ -14,10 +14,10 @@
 %% @see serlvers:gen_echo.
 
 {release,
- {"fanterlasticfour", "0.0.0"},
+ {"fanterlasticfour", "0.1.0"},
  {erts, "5.4.6"},
  [{kernel, "2.10.13"},
   {stdlib, "1.13.12"},
   {sasl, "2.1.1"},
-  {serlvers, "0.0.0"},
-  {fanterlasticfour, "0.0.0"}]}.
+  {serlvers, "0.1.0"},
+  {fanterlasticfour, "0.1.0"}]}.
