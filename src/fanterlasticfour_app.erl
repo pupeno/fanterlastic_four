@@ -17,7 +17,9 @@
 -export([start/2, stop/1]).
 
 start(_Type, _Args) ->
+    %%io:fwrite("~w:link(~w, ~w)~n", [?MODULE, _Type, _Args]),
     fanterlasticfour_sup:start_link().
 
 stop(_State) ->
+    %%io:fwrite("~w:start_link(~w)~n", [?MODULE, _State]),
     ok.
