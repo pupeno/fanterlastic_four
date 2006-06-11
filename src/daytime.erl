@@ -28,7 +28,7 @@
 %% @spec () -> Result
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start() ->
-    io:fwrite("~w:start()~n", [?MODULE]),
+    %%io:fwrite("~w:start()~n", [?MODULE]),
     gen_daytime:start(?MODULE, a, []).
 
 %% @doc Start a named daytime server.
@@ -39,7 +39,7 @@ start() ->
 %%   SupName = {local, atom()} | {global, atom()}
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start(SupName) ->
-    io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
+    %%io:fwrite("~w:start(~w)~n", [?MODULE, SupName]),
     gen_daytime:start(SupName, ?MODULE, [], []).
 
 %% @doc Start an unnamed daytime server.
@@ -49,7 +49,7 @@ start(SupName) ->
 %% @spec () -> Result
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start_link() ->
-    io:fwrite("~w:start_link()~n", [?MODULE]),
+    %%io:fwrite("~w:start_link()~n", [?MODULE]),
     gen_daytime:start_link(?MODULE, [], []).
 
 %% @doc Start a named daytime server.
@@ -60,7 +60,7 @@ start_link() ->
 %%   SupName = {local, atom()} | {global, atom()}
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 start_link(SupName) ->
-    io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
+    %%io:fwrite("~w:start_link(~w)~n", [?MODULE, SupName]),
     gen_daytime:start_link(SupName, ?MODULE, [], []).
 
 %% @doc Stop a process.
@@ -72,21 +72,21 @@ start_link(SupName) ->
 %% @spec (Name) -> ok
 %%   Name = atom() | {local, atom()} | {global, atom()}
 stop(Process) ->
-    io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
+    %%io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
     gen_daytime:stop(Process).
 
 %% @doc Initialize the daytime server... nothing really.
 %% @private Only gen_daytime should call this function.
 %% @since 0.0.0
 init(_Args) ->
-    io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
+    %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, []}.
 
 %% @doc The main function, generates and returns the daytime.
 %% @private Only gen_daytime should call this function.
 %% @since 0.0.0 
 daytime(State) ->
-    io:fwrite("~w:daytime()~n", [?MODULE]),
+    %%io:fwrite("~w:daytime()~n", [?MODULE]),
     {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
     DayTime = lists:flatten(
 		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
@@ -97,5 +97,5 @@ daytime(State) ->
 %% @private Only gen_daytime should call this function.
 %% @since 0.0.0
 terminate(_Reason, _State) ->
-    io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
+    %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
