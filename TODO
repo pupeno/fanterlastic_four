@@ -1,2 +1,3 @@
 - Make fanterlasticfour script show some error when failing (it currently fails silently).
 - Add an option (-h|--help) to the fanterlasticfour script to show the different options.
+- Find a way to not depend on the exact versions of kernel, sasl, etc. Hint: see src/fanterlasticfour.rel.
