@@ -10,6 +10,9 @@ erlapp_DATA = fanterlasticfour.app
 erlreldir = $(ERLANG_ROOT_DIR)/bin
 erlrel_DATA = fanterlasticfour.script fanterlasticfour.boot
 
+confdir = $(sysconfdir)/fanterlasticfour
+conf_DATA = fanterlasticfour.config
+
 EXTRA_DIST = $(erlsrc_DATA) $(erlapp_DATA) $(erlrel_DATA)
 CLEANFILES = $(erlbeam_DATA) $(erlrel_DATA)
 

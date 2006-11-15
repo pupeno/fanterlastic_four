@@ -12,7 +12,7 @@ bin_SCRIPTS = fanterlasticfour
 CLEANFILES = fanterlasticfour
 EXTRA_DIST = fanterlasticfour.in
 
-confdir = $(sysconfdir)
+confdir = $(sysconfdir)/fanterlasticfour
 conf_DATA = fanterlasticfour.conf
 CLEANFILES += fanterlasticfour.conf
 EXTRA_DIST += fanterlasticfour.conf.in
