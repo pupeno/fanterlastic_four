@@ -11,20 +11,18 @@
 #Defaults, can be customized in CONFIGFILE
 NAME="fanterlasticfour"
 
-NAMEFILE="/var/pid/fanterlasticfour"
-LOGDIR="/var/log/fanterlasticfour/"
-PIPEDIR="/var/tmp/fanterlasticfour/"
+NAMEFILE="@NAMEFILE@"
+LOGDIR="@LOGDIR@"
+PIPEDIR="@PIPEDIR@"
 
-ERL="/usr/bin/erl"
-RUN_ERL="/usr/bin/run_erl"
-ERL_CALL="/usr/bin/erl_call"
+ERL="@ERL@"
+RUN_ERL="@RUN_ERL@"
+ERL_CALL="@ERL_CALL@"
 #==============================================================
-
-CONFIGPREFIX="____CONFIGPREFIX____"
 
 ACTION="start"
 VERBOSE=0
-CONFIGFILE="$CONFIGPREFIX/fanterlasticfour/fanterlasticfour.sh"
+CONFIGFILE="@CONFIGFILE@"
 
 while getopts ":a:c:v" Option 
   do
@@ -56,7 +54,7 @@ case "$ACTION" in
 	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Starting."
 	    # Echo the line.
-	    echo "$RUN_ERL -daemon $PIPEDIR $LOGDIR \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
+	    echo "$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
 	fi
 
         # Are we (likely to be) already running ?
@@ -69,7 +67,7 @@ case "$ACTION" in
 	echo "$NAME" > $NAMEFILE
 
 	# Run Fanterlastic Four.
-	$RUN_ERL -daemon $PIPEDIR $LOGDIR "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
+	$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
 
 	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Done."
@@ -95,7 +93,7 @@ case "$ACTION" in
 	    echo "ERROR: File $NAMEFILE doesn't exist or is not readable. Aborting."
 	    exit 4
 	fi
-	
+
 	if [[ $VERBOSE == 1 ]] ; then
 	    echo "Done."
 	fi
@@ -105,4 +103,3 @@ case "$ACTION" in
 	exit 2
 	;;
 esac
-	

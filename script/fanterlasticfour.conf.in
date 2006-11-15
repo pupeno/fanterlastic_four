@@ -1,0 +1,12 @@
+# Name of the Erlang node.
+NAME="fanterlasticfour"
+
+# Some paths where Fanterlastic Four is going to write files.
+NAMEFILE="@NAMEFILE@"
+LOGDIR="@LOGDIR@"
+PIPEDIR="@PIPEDIR@"
+
+# Programs that Fanterlastic Four needs.
+ERL="@ERL@"
+RUN_ERL="@RUN_ERL@"
+ERL_CALL="@ERL_CALL@"

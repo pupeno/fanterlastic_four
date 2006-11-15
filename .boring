@@ -34,7 +34,8 @@
 \.beam$
 \.script$
 \.boot$
-^scripts/fanterlasticfour$
+^script/fanterlasticfour$
+^script/fanterlasticfour.conf$
 
 (^|/)doc/edoc-info
 (^|/)doc/.*\.html
