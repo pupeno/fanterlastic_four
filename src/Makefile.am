@@ -16,9 +16,10 @@ conf_DATA = fanterlasticfour.config
 EXTRA_DIST = $(erlsrc_DATA) $(erlapp_DATA) $(erlrel_DATA)
 CLEANFILES = $(erlbeam_DATA) $(erlrel_DATA)
 
-%.beam: %.erl
+.SUFFIXES: .erl .beam .rel .script .boot
+.erl.beam:
 	$(ERLC) $(ERLCFLAGS) -b beam $<
-%.script: %.rel
+.rel.script:
 	$(ERLC) $(ERLCFLAGS) -b beam $<
-%.boot: %.rel
+.rel.boot:
 	$(ERLC) $(ERLCFLAGS) -b beam $<
