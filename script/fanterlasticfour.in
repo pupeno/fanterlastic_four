@@ -24,23 +24,22 @@ ACTION="start"
 VERBOSE=0
 CONFIGFILE="@CONFIGFILE@"
 
-while getopts ":a:c:v" Option 
-  do
-  case $Option in
-      a)
-	  ACTION="$OPTARG"
-	  ;;
-      c)
-	  CONFIGFILE="$OPTARG"
-	  ;;
-      v)
-	  VERBOSE=1
-	  ;;
-      *)
-	  echo "Unrecognized option."
-	  exit 1;
-	  ;;
-  esac
+while getopts ":a:c:v" Option; do
+    case $Option in
+        a)
+            ACTION="$OPTARG"
+            ;;
+        c)
+            CONFIGFILE="$OPTARG"
+            ;;
+        v)
+            VERBOSE=1
+            ;;
+        *)
+            echo "Unrecognized option."
+            exit 1;
+            ;;
+    esac
 done
 
 if [ -r $CONFIGFILE ] ; then
@@ -51,55 +50,55 @@ fi
 
 case "$ACTION" in
     "start")
-	if [[ $VERBOSE == 1 ]] ; then
-	    echo "Starting."
-	    # Echo the line.
-	    echo "$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
-	fi
+        if [[ $VERBOSE == 1 ]] ; then
+            echo "Starting." 
+            # Echo the line.
+            echo "$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
+        fi
 
         # Are we (likely to be) already running ?
-	if [ -e $NAMEFILE ] ; then
-	    echo "ERROR: File $NAMEFILE exists. Probably you have another Fanterlastic Four instance running. Aborting."
-	    exit 3
-	fi
+        if [ -e $NAMEFILE ] ; then
+            echo "ERROR: File $NAMEFILE exists. Probably you have another Fanterlastic Four instance running. Aborting."
+            exit 3
+        fi
 
-	# Save the name for future reference.
-	echo "$NAME" > $NAMEFILE
+        # Save the name for future reference.
+        echo "$NAME" > $NAMEFILE
 
-	# Run Fanterlastic Four.
-	$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
+        # Run Fanterlastic Four.
+        $RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
 
-	if [[ $VERBOSE == 1 ]] ; then
-	    echo "Done."
-	fi
-	;;
+        if [[ $VERBOSE == 1 ]] ; then
+            echo "Done."
+        fi
+        ;;
 
     "stop")
-	if [[ $VERBOSE == 1 ]] ; then
-	    echo "Stoping."
-	    echo "$ERL_CALL -sname $NAME -a \"init stop\""
-	fi
-	
-	if [ -r $NAMEFILE ] ; then
+        if [[ $VERBOSE == 1 ]] ; then
+            echo "Stoping."
+            echo "$ERL_CALL -sname $NAME -a \"init stop\""
+        fi
+
+        if [ -r $NAMEFILE ] ; then
             # Get the name of the node we want to stop.
-	    NAME=$(cat $NAMEFILE)
+            NAME=$(cat $NAMEFILE)
 
-	    # Stop Fanterlastic Four.
-	    $ERL_CALL -sname $NAME -a "init stop" &> /dev/null
+            # Stop Fanterlastic Four.
+            $ERL_CALL -sname $NAME -a "init stop" &> /dev/null
 
-	    # Remove the name file.
-	    rm $NAMEFILE
-	else
-	    echo "ERROR: File $NAMEFILE doesn't exist or is not readable. Aborting."
-	    exit 4
-	fi
+            # Remove the name file.
+            rm $NAMEFILE
+        else
+            echo "ERROR: File $NAMEFILE doesn't exist or is not readable. Aborting."
+            exit 4
+        fi
 
-	if [[ $VERBOSE == 1 ]] ; then
-	    echo "Done."
-	fi
-	;;
+        if [[ $VERBOSE == 1 ]] ; then
+            echo "Done."
+        fi
+        ;;
     *)
-	echo "Action should be either \"start\" or \"stop\"."
-	exit 2
-	;;
+        echo "Action should be either \"start\" or \"stop\"."
+        exit 2
+        ;;
 esac
