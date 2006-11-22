@@ -2,7 +2,7 @@
 NAME="fanterlasticfour"
 
 # Some paths where Fanterlastic Four is going to write files.
-NAMEFILE="@NAMEFILE@"
+RUNDIR="@RUNDIR@"
 LOGDIR="@LOGDIR@"
 PIPEDIR="@PIPEDIR@"
 

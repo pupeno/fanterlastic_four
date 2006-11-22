@@ -11,7 +11,7 @@
 #Defaults, can be customized in CONFIGFILE
 NAME="fanterlasticfour"
 
-NAMEFILE="@NAMEFILE@"
+RUNDIR="@RUNDIR@"
 LOGDIR="@LOGDIR@"
 PIPEDIR="@PIPEDIR@"
 
@@ -23,6 +23,7 @@ ERL_CALL="@ERL_CALL@"
 ACTION="start"
 VERBOSE=0
 CONFIGFILE="@CONFIGFILE@"
+NAMEFILE="$RUNDIR/fanterlasticfour.name"
 
 while getopts ":a:c:v" Option; do
     case $Option in
@@ -50,10 +51,11 @@ fi
 
 case "$ACTION" in
     "start")
+        COMMAND="$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
         if [[ $VERBOSE == 1 ]] ; then
             echo "Starting." 
             # Echo the line.
-            echo "$RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ \"$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour\""
+            echo $COMMAND
         fi
 
         # Are we (likely to be) already running ?
@@ -63,10 +65,11 @@ case "$ACTION" in
         fi
 
         # Save the name for future reference.
-        echo "$NAME" > $NAMEFILE
+        mkdir -p "$RUNDIR"
+        echo "$NAME" > "$NAMEFILE"
 
         # Run Fanterlastic Four.
-        $RUN_ERL -daemon $PIPEDIR/ $LOGDIR/ "$ERL -sname $NAME -boot fanterlasticfour -config $CONFIGPREFIX/fanterlasticfour/fanterlasticfour"
+        $COMMAND
 
         if [[ $VERBOSE == 1 ]] ; then
             echo "Done."
@@ -74,24 +77,26 @@ case "$ACTION" in
         ;;
 
     "stop")
-        if [[ $VERBOSE == 1 ]] ; then
-            echo "Stoping."
-            echo "$ERL_CALL -sname $NAME -a \"init stop\""
-        fi
-
         if [ -r $NAMEFILE ] ; then
             # Get the name of the node we want to stop.
             NAME=$(cat $NAMEFILE)
-
-            # Stop Fanterlastic Four.
-            $ERL_CALL -sname $NAME -a "init stop" &> /dev/null
-
-            # Remove the name file.
-            rm $NAMEFILE
         else
             echo "ERROR: File $NAMEFILE doesn't exist or is not readable. Aborting."
             exit 4
         fi
+
+        COMMAND="$ERL_CALL -sname $NAME -a \"init stop\""
+
+        if [[ $VERBOSE == 1 ]] ; then
+            echo "Stoping."
+            echo $COMMAND
+            $COMMAND
+        else
+            $COMMAND &> /dev/null
+        fi
+
+        # Remove the name file.
+        rm $NAMEFILE
 
         if [[ $VERBOSE == 1 ]] ; then
             echo "Done."
