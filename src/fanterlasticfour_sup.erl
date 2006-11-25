@@ -18,13 +18,10 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 stop() ->
-    %%io:fwrite("~w:stop()~n", [?MODULE]),
-    case (whereis(echo_sup)) of
-        undefined ->
-            {ok, echo_sup_not_running};
-        Pid ->
-            {ok, exit(Pid, normal)}
-    end.
+    io:fwrite("~w:stop()~n", [?MODULE]),
+    ?MODULE ! {'EXIT', self(), shutdown},
+    ok.
+
 
 children() ->
     %%io:fwrite("~w:which_children()~n", [?MODULE]),
