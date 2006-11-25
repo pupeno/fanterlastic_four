@@ -84,12 +84,12 @@ init(_Args) ->
 
 %% @doc The main function, generates and returns the daytime.
 %% @private Only gen_daytime should call this function.
-%% @since 0.0.0 
+%% @since 0.0.0
 daytime(State) ->
     %%io:fwrite("~w:daytime()~n", [?MODULE]),
     {{Year, Month, Day}, {Hours, Minutes, Seconds}} = calendar:universal_time(),
     DayTime = lists:flatten(
-		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n", 
+		io_lib:format("~w-~2.2.0w-~2.2.0wT~2.2.0w:~2.2.0w:~2.2.0w+0000~n",
 			      [Year, Month, Day, Hours, Minutes, Seconds])),
     {DayTime, State}.
 
