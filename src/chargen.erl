@@ -84,10 +84,10 @@ stop(Process) ->
 init(_Args) ->
     %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, [0]}.
-    
+
 %% @doc The main function, generates and returns the characters.
 %% @private Only gen_chargen should call this function.
-%% @since 0.0.0 
+%% @since 0.0.0
 chargen([Position]) ->
     %%io:fwrite("~w:chargen([~w])~n", [?MODULE, Position]),
     Chargen = lists:append(circular_sublist(?posChars, Position, ?lineLength), "\n"),
@@ -115,5 +115,5 @@ circular_sublist(List, Start, Length) when Start + Length =< length(List) ->
 circular_sublist(List, Start, Length) when Start + Length > length(List) ->
     %%io:fwrite("~w:circular_sublist(~w, ~w, ~w)~n", [?MODULE, List, Start, Length]),
     Rest = Length - (length(List) - Start), % Rest of items to return.
-    lists:append(lists:nthtail(Start, List), 
+    lists:append(lists:nthtail(Start, List),
                  circular_sublist(List, 0, Rest)).

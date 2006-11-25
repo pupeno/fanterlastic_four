@@ -81,10 +81,10 @@ stop(Process) ->
 init(_Args) ->
     %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
     {ok, []}.
-    
+
 %% @doc The main function, generates and returns the daytime.
 %% @private Only gen_daytime should call this function.
-%% @since 0.0.0 
+%% @since 0.0.0
 time(State) ->
     %%io:fwrite("~w:time(~w)~n", [?MODULE, State]),
     Epoch1900 = {{1900, 01, 01}, {0, 0, 0}},
