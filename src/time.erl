@@ -19,7 +19,7 @@
 -module(time).
 -behaviour(gen_time).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
--export([init/1, time/1, terminate/2]).
+-export([init/1, time/1, terminate/2, transports/0]).
 
 %% @doc Start an unnamed daytime server.
 %% @see start/1
@@ -99,6 +99,9 @@ time(State) ->
 terminate(_Reason, _State) ->
     %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
+
+transports() ->
+    [tcp, udp].
 
 %% @doc Turn a time (days, hours, minutes, seconds) into seconds.
 %% @private Internal helper function.

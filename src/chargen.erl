@@ -19,7 +19,7 @@
 -module(chargen).
 -behaviour(gen_chargen).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
--export([init/1, chargen/1, terminate/2]).
+-export([init/1, chargen/1, terminate/2, transports/0]).
 
 -define(posChars, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"). % Possible characters.
 -define(lineLength, 71). % Length of the line to send.
@@ -103,6 +103,9 @@ chargen([Position]) ->
 terminate(_Reason, _State) ->
     %%io:fwrite("~w:terminate(~w, ~w)~n", [?MODULE, _Reason, _State]),
     ok.
+
+transports() ->
+    [tcp, udp].
 
 %% @doc This function is like lists:sublist/3 but treats the list as a circular list.
 %% <p>So, even when the start should be within limits, the length can be anything and that legnth will be reached by starting from the begining of the list as much as needed.</p>

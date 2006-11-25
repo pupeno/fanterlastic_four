@@ -19,7 +19,7 @@
 -module(echo).
 -behaviour(gen_echo).
 -export([start/0, start/1, start_link/0, start_link/1, stop/1]).
--export([init/1, echo/2, terminate/2]).
+-export([init/1, echo/2, terminate/2, transports/0]).
 
 %% @doc Start an unnamed echo server.
 %% @see start/1
@@ -89,6 +89,9 @@ echo(Data, State) ->
     %%io:fwrite("~w:echo(~w)~n", [?MODULE, Data]),
     %% {string:concat("You said: ", Data), State}. % Funnier version, but non-compliant.
     {Data, State}.
+
+transports() ->
+    [tcp, udp].
 
 %% @doc Clean up.
 %% @private Only gen_echo should call this function.
