@@ -27,63 +27,138 @@ children() ->
     %%io:fwrite("~w:which_children()~n", [?MODULE]),
     supervisor:which_children(?MODULE).
 
-init(_Args) ->
-    %%io:fwrite("~w:init(~w)~n", [?MODULE, _Args]),
-    {ok, EchoUDPPort} = application:get_env(echoUDPPort),
-    {ok, EchoTCPPort} = application:get_env(echoTCPPort),
-    {ok, ChargenUDPPort} = application:get_env(chargenUDPPort),
-    {ok, ChargenTCPPort} = application:get_env(chargenTCPPort),
-    {ok, DaytimeUDPPort} = application:get_env(daytimeUDPPort),
-    {ok, DaytimeTCPPort} = application:get_env(daytimeTCPPort),
-    {ok, TimeUDPPort} = application:get_env(timeUDPPort),
-    {ok, TimeTCPPort} = application:get_env(timeTCPPort),
-    {ok, PortOffset} = application:get_env(portOffset),
-    {ok, {{one_for_one, 1, 5},
-          [{echo_udp,
-            {launcher, start_link, [{local, echo_udp_launcher},
-                                    echo,
-                                    udp,
-                                    EchoUDPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {echo_tcp,
-            {launcher, start_link, [{local, echo_tcp_launcher},
-                                    echo,
-                                    tcp,
-                                    EchoTCPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {chargen_udp,
-            {launcher, start_link, [{local, chargen_udp_launcher},
-                                    chargen,
-                                    udp,
-                                    ChargenUDPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {chargen_tcp,
-            {launcher, start_link, [{local, chargen_tcp_launcher},
-                                    chargen,
-                                    tcp,
-                                    ChargenTCPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {daytime_udp,
-            {launcher, start_link, [{local, daytime_udp_launcher},
-                                    daytime,
-                                    udp,
-                                    DaytimeUDPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {daytime_tcp,
-            {launcher, start_link, [{local, daytime_tcp_launcher},
-                                    daytime,
-                                    tcp,
-                                    DaytimeTCPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {time_udp,
-            {launcher, start_link, [{local, time_udp_launcher},
-                                    time,
-                                    udp,
-                                    TimeUDPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]},
-           {time_tcp,
-            {launcher, start_link, [{local, time_tcp_launcher},
-                                    time,
-                                    tcp,
-                                    TimeTCPPort + PortOffset]},
-            permanent, 1000, worker, [launcher]}]}}.
+
+init(Services) ->
+    io:fwrite("~w:init(~w)~n", [?MODULE, Services]),
+%    Cs = child_spec(Services),
+%    io:fwrite(" Child specs: ~w.~n", [Cs]),
+    {ok, {{one_for_one, 1, 5}, []}}.
+
+
+children_specs([]) ->
+    io:fwrite("~w:children_specs([])~n", [?MODULE]),
+    [];
+
+children_specs([Service|Services]) ->
+    io:fwrite("~w:children_specs(~w)~n", [?MODULE, [Service|Services]]),
+    lists:append(children_specs(Service), children_specs(Services));
+
+children_specs({Name}) ->
+    io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name}]),
+    children_specs({Name, [{default, all, default}]});
+
+children_specs({Name, [_|_]=Interfaces}) ->
+    io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name, Interfaces}]),
+    EInterfaces = explode_interfaces(Interfaces),
+    lists:map(fun(I) -> child_spec(Name, I) end, EInterfaces).
+
+
+child_spec(Name, {Port, Ip, Transport}) ->
+    io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
+    BaseName = lists:append([atom_to_list(Name), "_", atom_to_list(Transport), "_",
+                             if is_list(Ip) -> Ip;
+                                is_atom(Ip) -> atom_to_list(Ip)
+                             end,
+                             "_",integer_to_list(Port)]),
+    io:fwrite("  BaseName=~w~n", [BaseName]),
+    Id = list_to_atom(BaseName),
+    io:fwrite("  Id=~w~n", [Id]),
+    ProcName = list_to_atom(lists:append(BaseName, "_launcher")),
+    io:fwrite("  ProcName=~w~n", [ProcName]),
+    {Id,
+     {launcher, start_link, [{local, ProcName}, Name, Transport, Port]},
+     permanent, 1000, worker, [launcher]}.
+
+
+%fill_defaults(Interface) ->
+    %% TODO: implemente this.
+%    Interface.
+
+
+explode_interfaces({Port, Ip, both}) ->
+    lists:flatmap(fun explode_interfaces/1, [{Port, Ip, tcp},
+                                             {Port, Ip, udp}]);
+
+explode_interfaces([_|_]=Interfaces) ->
+    lists:flatmap(fun explode_interfaces/1, Interfaces);
+
+explode_interfaces({[], _IP, _Transport}) ->
+    [];
+explode_interfaces({[Port|Ports], Ip, Transport}) ->
+    lists:append(explode_interfaces({Port,  Ip, Transport}),
+                 explode_interfaces({Ports, Ip, Transport}));
+
+explode_interfaces({_Port, [], _Transport}) ->
+    [];
+explode_interfaces({Port, [[_|_]=Ip|Ips], Transport}) ->
+    lists:append(explode_interfaces({Port, Ip,  Transport}),
+                 explode_interfaces({Port, Ips, Transport}));
+
+explode_interfaces({_Port, _Ip, []}) ->
+    [];
+explode_interfaces({Port, Ip, [Transport|Transports]}) ->
+    lists:append(explode_interfaces({Port, Ip, Transport}),
+                 explode_interfaces({Port, Ip, Transports}));
+
+explode_interfaces({Port, Ip, Transport}) ->
+    [{Port, Ip, Transport}].
+
+    %% {ok, EchoUDPPort} = application:get_env(echoUDPPort),
+%%     {ok, EchoTCPPort} = application:get_env(echoTCPPort),
+%%     {ok, ChargenUDPPort} = application:get_env(chargenUDPPort),
+%%     {ok, ChargenTCPPort} = application:get_env(chargenTCPPort),
+%%     {ok, DaytimeUDPPort} = application:get_env(daytimeUDPPort),
+%%     {ok, DaytimeTCPPort} = application:get_env(daytimeTCPPort),
+%%     {ok, TimeUDPPort} = application:get_env(timeUDPPort),
+%%     {ok, TimeTCPPort} = application:get_env(timeTCPPort),
+%%     {ok, PortOffset} = application:get_env(portOffset),
+%%     {ok, {{one_for_one, 1, 5},
+%%           [{echo_udp,
+%%             {launcher, start_link, [{local, echo_udp_launcher},
+%%                                     echo,
+%%                                     udp,
+%%                                     EchoUDPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {echo_tcp,
+%%             {launcher, start_link, [{local, echo_tcp_launcher},
+%%                                     echo,
+%%                                     tcp,
+%%                                     EchoTCPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {chargen_udp,
+%%             {launcher, start_link, [{local, chargen_udp_launcher},
+%%                                     chargen,
+%%                                     udp,
+%%                                     ChargenUDPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {chargen_tcp,
+%%             {launcher, start_link, [{local, chargen_tcp_launcher},
+%%                                     chargen,
+%%                                     tcp,
+%%                                     ChargenTCPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {daytime_udp,
+%%             {launcher, start_link, [{local, daytime_udp_launcher},
+%%                                     daytime,
+%%                                     udp,
+%%                                     DaytimeUDPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {daytime_tcp,
+%%             {launcher, start_link, [{local, daytime_tcp_launcher},
+%%                                     daytime,
+%%                                     tcp,
+%%                                     DaytimeTCPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {time_udp,
+%%             {launcher, start_link, [{local, time_udp_launcher},
+%%                                     time,
+%%                                     udp,
+%%                                     TimeUDPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]},
+%%            {time_tcp,
+%%             {launcher, start_link, [{local, time_tcp_launcher},
+%%                                     time,
+%%                                     tcp,
+%%                                     TimeTCPPort + PortOffset]},
+%%             permanent, 1000, worker, [launcher]}]}}.
+
