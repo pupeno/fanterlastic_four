@@ -49,8 +49,34 @@ children_specs({Name}) ->
 
 children_specs({Name, [_|_]=Interfaces}) ->
     io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name, Interfaces}]),
-    EInterfaces = explode_interfaces(Interfaces),
+    EInterfaces = lists:flatmap(fun(I) -> fill_defaults(Name, I) end,
+                                explode_interfaces(Interfaces)),
     lists:map(fun(I) -> child_spec(Name, I) end, EInterfaces).
+
+
+fill_defaults(Name) ->
+    fill_defaults(Name, {}).
+
+
+fill_defaults(Name, {}) ->
+    fill_defaults(Name, {default});
+
+fill_defaults(Name, {Port}) ->
+    fill_defaults(Name, {Port, all});
+
+fill_defaults(Name, {Port, Ip}) ->
+    fill_defaults(Name, {Port, Ip, default});
+
+fill_defaults(Name, {Port, Ip, default}) ->
+    lists:map(fun(Transport) -> fill_defaults(Name, {Port, Ip, Transport}) end, Name:transports());
+
+fill_defaults(Name, {default, Ip, Transport}) ->
+    {ok, Port} = inet:getservbyname(Name, Transport),
+    fill_defaults(Name, {Port, Ip, Transport});
+
+fill_defaults(_Name, {Port, Ip, Transport}) ->
+    %% TODO: implemente this.
+    {Port, Ip, Transport}.
 
 
 child_spec(Name, {Port, Ip, Transport}) ->
@@ -68,11 +94,6 @@ child_spec(Name, {Port, Ip, Transport}) ->
     {Id,
      {launcher, start_link, [{local, ProcName}, Name, Transport, Port]},
      permanent, 1000, worker, [launcher]}.
-
-
-%fill_defaults(Interface) ->
-    %% TODO: implemente this.
-%    Interface.
 
 
 explode_interfaces({Port, Ip, both}) ->
