@@ -34,7 +34,11 @@ init(Services) ->
 %    io:fwrite(" Child specs: ~w.~n", [Cs]),
     {ok, {{one_for_one, 1, 5}, []}}.
 
-
+%% @doc Turn a configuration list into a children specification list.
+%% @since 0.1.0
+%% TODO: write a correct spec, mark the function as private.
+%% @spec () -> Result
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 children_specs([]) ->
     io:fwrite("~w:children_specs([])~n", [?MODULE]),
     [];
@@ -47,17 +51,55 @@ children_specs({Name}) ->
     io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name}]),
     children_specs({Name, [{default, all, default}]});
 
-children_specs({Name, [_|_]=Interfaces}) ->
+children_specs({Name, Interfaces}) ->
     io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name, Interfaces}]),
-    EInterfaces = lists:flatmap(fun(I) -> fill_defaults(Name, I) end,
-                                explode_interfaces(Interfaces)),
-    lists:map(fun(I) -> child_spec(Name, I) end, EInterfaces).
+    lists:map(fun(I) -> child_spec(Name, I) end,
+              lists:flatmap(fun(I) -> fill_defaults(Name, I) end,
+                            explode_interfaces(Interfaces)));
+
+children_specs(Name) ->
+    io:fwrite("~w:children_specs(~w)~n", [?MODULE, Name]),
+    children_specs({Name}).
+
+%% @doc Turn a compact specification of interfaces (the triple port, ip, transport) into an expanded one where each item is only one transport, one ip (or all) and one port.
+%% @since 0.1.0
+%% TODO: write a correct spec, mark the function as private.
+%% @spec () -> Result
+%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
+explode_interfaces({Port, Ip, both}) ->
+    lists:flatmap(fun explode_interfaces/1, [{Port, Ip, tcp},
+                                             {Port, Ip, udp}]);
+
+explode_interfaces({[],           _IP, _Transport}) ->
+    [];
+explode_interfaces({[Port|Ports],  Ip,  Transport}) ->
+    lists:append(explode_interfaces({Port,  Ip, Transport}),
+                 explode_interfaces({Ports, Ip, Transport}));
+
+explode_interfaces({_Port, [],       _Transport}) ->
+    [];
+%%explode_interfaces({ Port, [[_|_]=Ip|Ips],  Transport}) ->
+explode_interfaces({ Port, [Ip|Ips],  Transport}) when is_list(Ip) ->
+    lists:append(explode_interfaces({Port, Ip,  Transport}),
+                 explode_interfaces({Port, Ips, Transport}));
+
+explode_interfaces({_Port, _Ip, []}) ->
+    [];
+explode_interfaces({ Port,  Ip, [Transport|Transports]}) ->
+    lists:append(explode_interfaces({Port, Ip, Transport}),
+                 explode_interfaces({Port, Ip, Transports}));
+
+explode_interfaces({Port, Ip, Transport}) ->
+    [{Port, Ip, Transport}];
+
+explode_interfaces(Interfaces) when is_list(Interfaces) ->
+    lists:flatmap(fun explode_interfaces/1, Interfaces).
 
 
-fill_defaults(Name) ->
-    fill_defaults(Name, {}).
-
-
+%% @doc Having a interface definition with some missing parts or some default parts turn in into a interface definition with all parts defined to the real value.
+%% @since 0.1.0
+%% TODO: write a correct spec, mark the function as private.
+%% @spec (Name, Interface) -> {Port, Ip, Transport}.
 fill_defaults(Name, {}) ->
     fill_defaults(Name, {default});
 
@@ -75,10 +117,21 @@ fill_defaults(Name, {default, Ip, Transport}) ->
     fill_defaults(Name, {Port, Ip, Transport});
 
 fill_defaults(_Name, {Port, Ip, Transport}) ->
-    %% TODO: implemente this.
     {Port, Ip, Transport}.
 
 
+%% @doc Shortcut to call fill_defaults(Name, {}) by just providing the first parameter.
+%% @since 0.1.0
+%% TODO: write a correct spec, mark the function as private.
+%% @spec (Name) -> {Port, Ip, Transport}.
+fill_defaults(Name) ->
+    fill_defaults(Name, {}).
+
+%% @doc Having an interface definition, turn it into a child specification for the supervisor.
+%% @since 0.1.0
+%% TODO: write a correct spec, mark the function as private.
+%% @spec (Name, {Port, Ip, Transport) -> Result
+%%   Result = {Id, {launcher, start_link, [{local, ProcName}, Name, Transport, Port]}, permanent, 1000, worker, [launcher]}.
 child_spec(Name, {Port, Ip, Transport}) ->
     io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
     BaseName = lists:append([atom_to_list(Name), "_", atom_to_list(Transport), "_",
@@ -95,34 +148,6 @@ child_spec(Name, {Port, Ip, Transport}) ->
      {launcher, start_link, [{local, ProcName}, Name, Transport, Port]},
      permanent, 1000, worker, [launcher]}.
 
-
-explode_interfaces({Port, Ip, both}) ->
-    lists:flatmap(fun explode_interfaces/1, [{Port, Ip, tcp},
-                                             {Port, Ip, udp}]);
-
-explode_interfaces([_|_]=Interfaces) ->
-    lists:flatmap(fun explode_interfaces/1, Interfaces);
-
-explode_interfaces({[], _IP, _Transport}) ->
-    [];
-explode_interfaces({[Port|Ports], Ip, Transport}) ->
-    lists:append(explode_interfaces({Port,  Ip, Transport}),
-                 explode_interfaces({Ports, Ip, Transport}));
-
-explode_interfaces({_Port, [], _Transport}) ->
-    [];
-explode_interfaces({Port, [[_|_]=Ip|Ips], Transport}) ->
-    lists:append(explode_interfaces({Port, Ip,  Transport}),
-                 explode_interfaces({Port, Ips, Transport}));
-
-explode_interfaces({_Port, _Ip, []}) ->
-    [];
-explode_interfaces({Port, Ip, [Transport|Transports]}) ->
-    lists:append(explode_interfaces({Port, Ip, Transport}),
-                 explode_interfaces({Port, Ip, Transports}));
-
-explode_interfaces({Port, Ip, Transport}) ->
-    [{Port, Ip, Transport}].
 
     %% {ok, EchoUDPPort} = application:get_env(echoUDPPort),
 %%     {ok, EchoTCPPort} = application:get_env(echoTCPPort),
@@ -182,4 +207,3 @@ explode_interfaces({Port, Ip, Transport}) ->
 %%                                     tcp,
 %%                                     TimeTCPPort + PortOffset]},
 %%             permanent, 1000, worker, [launcher]}]}}.
-
