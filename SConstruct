@@ -7,22 +7,22 @@
 # Fanterlastic Four is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with Fanterlastic Four; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
-env = Environment(tools = ["default", "erlang"])
+# Configuration.
+options = Options("options.cache")
+options.AddOptions(PathOption("ERLANGPREFIX", "Erlang prefix directory (where Erlang is installed)", "/usr/local/lib/erlang/"),
+                PathOption("CONFIGPREFIX", "Config prefix directory", "/usr/local/etc/"),
+                PathOption("BINPREFIX", "Binaries prefix directory", "/usr/local/bin/"))
+
+env = Environment(tools = ["default", "erlang"], options=options)
+
+# Save the options.
+options.Save(options.files[0], env)
 
 # Use cache, erlang takes long to find dependencies.
 env.SetOption('implicit_cache', 1)
 
-# Configuration.
-configFile = ".fanterlasticfour.conf"
-opts = Options(configFile)
-opts.Add(PathOption("ERLANGPREFIX", "Erlang prefix directory (where Erlang is installed)", "/usr/local/lib/erlang/"))
-opts.Add(PathOption("CONFIGPREFIX", "Config prefix directory", "/usr/local/etc/"))
-opts.Add(PathOption("BINPREFIX", "Binaries prefix directory", "/usr/local/bin/"))
-opts.Update(env)
-opts.Save(configFile, env)
-
 # Help.
-Help(opts.GenerateHelpText(env))
+Help(options.GenerateHelpText(env))
 
 sources = ["src/fanterlasticfour_app.erl",
            "src/fanterlasticfour_sup.erl",
