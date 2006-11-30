@@ -35,13 +35,14 @@ sources = ["src/fanterlasticfour_app.erl",
 beams = env.Erlang(sources)
 
 # Generate the boot and script.
-bootScript = env.Erlang(["src/fanterlasticfour.rel"],
-                        LIBPATH="src/")
+bootScript = env.Erlang(["src/fanterlasticfour.rel"])
 
 # Generate the start script.
-env.Command('scripts/fanterlasticfour', 'scripts/fanterlasticfour.sh',
-            ["sed 's|____CONFIGPREFIX____|$CONFIGPREFIX|' < $SOURCE > $TARGET",
-             Chmod('$TARGET', 0755)])
+scrBldCmd = "sed -e \"s,@RUNDIR@,$(localstatedir)/run,g\" -e \"s,@LOGDIR@,$(localstatedir)/log/fanterlasticfour,g\" -e \"s,@PIPEDIR\@,$(localstatedir)/tmp/fanterlasticfour,g\" -e \"s,@ERL\@,$(ERL),g\" -e \"s,@RUN_ERL\@,$(RUN_ERL),g\" -e \"s,@ERL_CALL\@,$(ERL_CALL),g\" -e \"s,@CONFIGFILE\@,$(confdir)/fanterlasticfour.conf,g\" < $SOURCE > $TARGET"
+scr = env.Command('script/fanterlasticfour', 'script/fanterlasticfour.in',
+                  [scrBldCmd, Chmod('$TARGET', 0755)])
+cnf = env.Command('script/fanterlasticfour.conf', 'script/fanterlasticfour.conf.in',
+                  [scrBldCmd])
 
 # Install directories.
 fanterlasticFourDir = "$ERLANGPREFIX/lib/fanterlasticfour-0.0.0/"
@@ -50,12 +51,12 @@ binDir = "$BINPREFIX"
 
 # Install files
 env.Install(fanterlasticFourDir + "ebin/", beams)
-env.Install(fanterlasticFourDir + "ebin/", "src/fanterlasticfour.app")
+env.Install(fanterlasticFourDir + "ebin/", "ebin/fanterlasticfour.app")
 env.Install(fanterlasticFourDir + "src/", sources)
 env.Install("$ERLANGPREFIX/bin/", bootScript)
-env.Install(configDir, "configs/fanterlasticfour.sh")
-env.Install(configDir, "configs/fanterlasticfour.config")
-env.Install(binDir, "scripts/fanterlasticfour")
+env.Install(configDir, "src/fanterlasticfour.config")
+env.Install(configDir, cnf)
+env.Install(binDir, scr)
 
 # Alias for installing.
 env.Alias("install", "$ERLANGPREFIX")
