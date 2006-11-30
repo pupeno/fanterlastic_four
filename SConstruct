@@ -38,6 +38,7 @@ beams = env.Erlang(sources)
 bootScript = env.Erlang(["src/fanterlasticfour.rel"])
 
 # Generate the start script.
+#TODO: perform the correct replacements, using SCons variables (and not unenxisting Makefile ones).
 scrBldCmd = "sed -e \"s,@RUNDIR@,$(localstatedir)/run,g\" -e \"s,@LOGDIR@,$(localstatedir)/log/fanterlasticfour,g\" -e \"s,@PIPEDIR\@,$(localstatedir)/tmp/fanterlasticfour,g\" -e \"s,@ERL\@,$(ERL),g\" -e \"s,@RUN_ERL\@,$(RUN_ERL),g\" -e \"s,@ERL_CALL\@,$(ERL_CALL),g\" -e \"s,@CONFIGFILE\@,$(confdir)/fanterlasticfour.conf,g\" < $SOURCE > $TARGET"
 scr = env.Command('script/fanterlasticfour', 'script/fanterlasticfour.in',
                   [scrBldCmd, Chmod('$TARGET', 0755)])
