@@ -215,15 +215,14 @@ child_spec(Name, {Port, Ip, Transport}) ->
 
 -ifdef(TEST).
 
-child_spec_echo_1234_all_tcp_test() ->
-    {echo_tcp_all_1234,{launcher, start_link,
-                        [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
-     permanent, 1000, worker, [launcher]}
-        = child_spec(echo, {1234, all, tcp}).
+child_spec_echo_test_() ->
+    [?_assert({echo_tcp_all_1234,
+               {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
+               permanent, 1000, worker, [launcher]}
+              == child_spec(echo, {1234, all, tcp})),
+     ?_assert({'chargen_udp_10.0.0.1_10000',
+               {launcher, start_link, [{local,'chargen_udp_10.0.0.1_10000_launcher'}, chargen, udp, 10000]},
+               permanent, 1000, worker, [launcher]}
+              == child_spec(chargen, {10000, "10.0.0.1", udp}))].
 
-child_spec_chargen_10000_10_0_0_1_udp_test() ->
-    {'chargen_udp_10.0.0.1_10000',{launcher, start_link,
-                        [{local,'chargen_udp_10.0.0.1_10000_launcher'}, chargen, udp, 10000]},
-     permanent, 1000, worker, [launcher]}
-        = child_spec(chargen, {10000, "10.0.0.1", udp}).
--endif.
+-endif. %% ifdef(TEST).
