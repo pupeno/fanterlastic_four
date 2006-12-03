@@ -65,4 +65,4 @@ env.Alias("install", "$CONFIGPREFIX")
 env.Alias("install", "$BINPREFIX")
 
 # Documentation
-env.EDoc("doc/index.html", sources)
+env.EDocFiles(sources)
