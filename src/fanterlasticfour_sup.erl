@@ -216,6 +216,19 @@ child_spec(Name, {Port, Ip, Transport}) ->
 -ifdef(TEST).
 
 
+explode_interfaces_test_() ->
+    Ip = "127.0.0.1",
+    Ip2 = "10.0.0.1",
+    [?_assert(explode_interfaces({1234, Ip, both}) == [{1234, Ip, tcp}, {1234, Ip, udp}]),
+     ?_assert(explode_interfaces({[7,8], Ip, udp}) == [{7, Ip, udp}, {8, Ip, udp}]),
+     ?_assert(explode_interfaces({1234, [Ip, Ip2], udp}) == [{1234, Ip, udp}, {1234, Ip2, udp}]),
+     ?_assert(explode_interfaces({1234, Ip, [tcp,udp]}) == [{1234, Ip, tcp}, {1234, Ip, udp}]),
+     ?_assert(explode_interfaces({1234, Ip, tcp}) == [{1234, Ip, tcp}]),
+     ?_assert(explode_interfaces([{7, Ip, both}, {[9,2], [Ip, Ip2], [tcp, udp]}]) ==
+              [{7, Ip, tcp}, {7, Ip, udp},
+               {9, Ip, tcp}, {9, Ip, udp}, {9, Ip2, tcp}, {9, Ip2, udp},
+               {2, Ip, tcp}, {2, Ip, udp}, {2, Ip2, tcp}, {2, Ip2, udp}])].
+
 fill_defaults_test_() ->
     Ip = "127.0.0.1",
     [?_assert(fill_defaults(echo) == [{7, all, tcp}, {7, all, udp}]),
