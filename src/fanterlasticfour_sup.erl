@@ -225,4 +225,15 @@ child_spec_echo_test_() ->
                permanent, 1000, worker, [launcher]}
               == child_spec(chargen, {10000, "10.0.0.1", udp}))].
 
+fill_defaults_test_() ->
+    Ip = "127.0.0.1",
+    [?_assert(fill_defaults(echo) == [{7, all, tcp}, {7, all, udp}]),
+     ?_assert(fill_defaults(echo, {}) == [{7, all, tcp}, {7, all, udp}]),
+     ?_assert(fill_defaults(echo, {1543}) == [{1543, all, tcp}, {1543, all, udp}]),
+     ?_assert(fill_defaults(echo, {1543, Ip}) == [{1543, Ip, tcp}, {1543, Ip, udp}]),
+     ?_assert(fill_defaults(echo, {1543, Ip, default}) == [{1543, Ip, tcp}, {1543, Ip, udp}]),
+     ?_assert(fill_defaults(echo, {default, Ip, tcp}) == {7, Ip, tcp}),
+     ?_assert(fill_defaults(echo, {1543, Ip, tcp}) == {1543, Ip, tcp})].
+
+
 -endif. %% ifdef(TEST).
