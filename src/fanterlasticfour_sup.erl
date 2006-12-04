@@ -241,14 +241,14 @@ fill_defaults_test_() ->
 
 
 child_spec_echo_test_() ->
-    [?_assert({echo_tcp_all_1234,
+    [?_assert(child_spec(echo, {1234, all, tcp}) ==
+              {echo_tcp_all_1234,
                {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
-               permanent, 1000, worker, [launcher]}
-              == child_spec(echo, {1234, all, tcp})),
-     ?_assert({'chargen_udp_10.0.0.1_10000',
+               permanent, 1000, worker, [launcher]}),
+     ?_assert(child_spec(chargen, {10000, "10.0.0.1", udp}) ==
+              {'chargen_udp_10.0.0.1_10000',
                {launcher, start_link, [{local,'chargen_udp_10.0.0.1_10000_launcher'}, chargen, udp, 10000]},
-               permanent, 1000, worker, [launcher]}
-              == child_spec(chargen, {10000, "10.0.0.1", udp}))].
+               permanent, 1000, worker, [launcher]})].
 
 
 -endif. %% ifdef(TEST).
