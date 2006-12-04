@@ -83,7 +83,9 @@ explode_interfaces({[Port|Ports],  Ip,  Transport}) ->
 
 explode_interfaces({_Port, [],       _Transport}) ->
     [];
-explode_interfaces({ Port, [Ip|Ips],  Transport}) when is_list(Ip) ->
+explode_interfaces({ Port, [Ip|Ips],  Transport}) when is_list(Ip);    % An Ip is a list when it is a string with the ip, like: "10.0.0.1".
+                                                       is_atom(Ip);    % An Ip is an atom when it is 'all', which is all the Ips.
+                                                       is_tuple(Ip) -> % An Ip is a tuplu when it comes pre-parsed, like {10,0,0,1}.
     lists:append(explode_interfaces({Port, Ip,  Transport}),
                  explode_interfaces({Port, Ips, Transport}));
 
@@ -92,6 +94,10 @@ explode_interfaces({_Port, _Ip, []}) ->
 explode_interfaces({ Port,  Ip, [Transport|Transports]}) ->
     lists:append(explode_interfaces({Port, Ip, Transport}),
                  explode_interfaces({Port, Ip, Transports}));
+
+explode_interfaces({Port, Ip, Transport}) when is_list(Ip) ->
+    {ok, ParsedIp} = inet_parse:address(Ip),
+    [{Port, ParsedIp, Transport}];
 
 explode_interfaces({Port, Ip, Transport}) ->
     [{Port, Ip, Transport}];
@@ -250,16 +256,19 @@ children_specs_test_() ->
 
 explode_interfaces_test_() ->
     Ip = "127.0.0.1",
-    Ip2 = "10.0.0.1",
-    [?_assert(explode_interfaces({1234, Ip, both}) == [{1234, Ip, tcp}, {1234, Ip, udp}]),
-     ?_assert(explode_interfaces({[7,8], Ip, udp}) == [{7, Ip, udp}, {8, Ip, udp}]),
-     ?_assert(explode_interfaces({1234, [Ip, Ip2], udp}) == [{1234, Ip, udp}, {1234, Ip2, udp}]),
-     ?_assert(explode_interfaces({1234, Ip, [tcp,udp]}) == [{1234, Ip, tcp}, {1234, Ip, udp}]),
-     ?_assert(explode_interfaces({1234, Ip, tcp}) == [{1234, Ip, tcp}]),
-     ?_assert(explode_interfaces([{7, Ip, both}, {[9,2], [Ip, Ip2], [tcp, udp]}]) ==
-              [{7, Ip, tcp}, {7, Ip, udp},
-               {9, Ip, tcp}, {9, Ip, udp}, {9, Ip2, tcp}, {9, Ip2, udp},
-               {2, Ip, tcp}, {2, Ip, udp}, {2, Ip2, tcp}, {2, Ip2, udp}])].
+    {ok, ParsedIp} = inet_parse:address(Ip),
+    Ip2 = "2002::1",
+    {ok, ParsedIp2} = inet_parse:address(Ip2),
+    [?_assert(explode_interfaces({1234, Ip, both}) == [{1234, ParsedIp, tcp}, {1234, ParsedIp, udp}]),
+     ?_assert(explode_interfaces({[7,8], Ip, udp}) == [{7, ParsedIp, udp}, {8, ParsedIp, udp}]),
+     ?_assert(explode_interfaces({1234, [Ip, Ip2], udp}) == [{1234, ParsedIp, udp}, {1234, ParsedIp2, udp}]),
+     ?_assert(explode_interfaces({1234, Ip, [tcp,udp]}) == [{1234, ParsedIp, tcp}, {1234, ParsedIp, udp}]),
+     ?_assert(explode_interfaces({1234, Ip, tcp}) == [{1234, ParsedIp, tcp}]),
+     ?_assert(explode_interfaces({1234, ParsedIp, tcp}) == [{1234, ParsedIp, tcp}]),
+     ?_assert(explode_interfaces([{7, Ip, both}, {[9,2], [Ip, ParsedIp2, all], [tcp, udp]}]) ==
+              [{7, ParsedIp, tcp}, {7, ParsedIp, udp},
+               {9, ParsedIp, tcp}, {9, ParsedIp, udp}, {9, ParsedIp2, tcp}, {9, ParsedIp2, udp}, {9, all, tcp}, {9, all, udp},
+               {2, ParsedIp, tcp}, {2, ParsedIp, udp}, {2, ParsedIp2, tcp}, {2, ParsedIp2, udp}, {2, all, tcp}, {2, all, udp}])].
 
 fill_defaults_test_() ->
     Ip = "127.0.0.1",
