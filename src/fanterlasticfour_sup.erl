@@ -78,7 +78,6 @@ explode_interfaces({[Port|Ports],  Ip,  Transport}) ->
 
 explode_interfaces({_Port, [],       _Transport}) ->
     [];
-%%explode_interfaces({ Port, [[_|_]=Ip|Ips],  Transport}) ->
 explode_interfaces({ Port, [Ip|Ips],  Transport}) when is_list(Ip) ->
     lists:append(explode_interfaces({Port, Ip,  Transport}),
                  explode_interfaces({Port, Ips, Transport}));
