@@ -165,7 +165,7 @@ child_spec(Name, {Port, Ip, Transport}) ->
      permanent, 1000, worker, [launcher]}.
 
 %% @doc Having list of strings and a separator, join or implode into one string with all the strings from the list separated by the separator.
-%% @prinave Internal helper function.
+%% @private Internal helper function.
 %% @since 0.2.0
 %% @spec (Strs, Separator) -> string()
 join(Strs, Separator) ->
