@@ -222,6 +222,16 @@ child_spec(Name, {Port, Ip, Transport}) ->
 
 -ifdef(TEST).
 
+children_specs_test_() ->
+    [?_assert(children_specs([]) == []),
+     
+     
+     ?_assert(children_specs({echo, [{1234, all, tcp}]}) ==
+              [{echo_tcp_all_1234,
+                {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
+                permanent, 1000, worker, [launcher]}])
+     ].
+
 
 explode_interfaces_test_() ->
     Ip = "127.0.0.1",
