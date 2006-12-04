@@ -14,12 +14,17 @@
 
 -module(fanterlasticfour_sup).
 -behaviour(supervisor).
--export([start_link/0, stop/0, children/0]).
+-export([start_link/1, stop/0, children/0]).
 -export([init/1]).
 
-start_link() ->
-    %%io:fwrite("~w:start_link()~n", [?MODULE]),
-    supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+-compile(export_all).
+
+-include_lib("eunit/include/eunit.hrl").
+
+start_link(Services) ->
+    io:fwrite("~w:start_link(~w)~n", [?MODULE, Services]),
+    supervisor:start_link({local, ?MODULE}, ?MODULE, Services).
+
 
 stop() ->
     io:fwrite("~w:stop()~n", [?MODULE]),
@@ -34,9 +39,9 @@ children() ->
 
 init(Services) ->
     io:fwrite("~w:init(~w)~n", [?MODULE, Services]),
-%    Cs = child_spec(Services),
-%    io:fwrite(" Child specs: ~w.~n", [Cs]),
-    {ok, {{one_for_one, 1, 5}, []}}.
+    Cs = children_specs(Services),
+    io:fwrite(" Child specs: ~w.~n", [Cs]),
+    {ok, {{one_for_one, 1, 5}, Cs}}.
 
 %% @doc Turn a configuration list into a children specification list.
 %% @since 0.2.0
