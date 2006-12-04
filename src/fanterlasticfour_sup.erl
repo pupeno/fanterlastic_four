@@ -8,6 +8,10 @@
 %% Linking Fanterlastic Four statically or dynamically with other modules is making a combined work based on Fanterlastic Four. Thus, the terms and conditions of the GNU General Public License cover the whole combination.
 %% In addition, as a special exception, the copyright holders of Fanterlastic Four give you permission to combine Fanterlastic Four program with code included in the standard release of Erlang/OTP under the Erlang Public Licence (or modified versions of such code, with unchanged license). You may copy and distribute such a system following the terms of the GNU GPL for Fanterlastic Four and the licenses of the other code concerned, provided that you include the source code of that other code when and as the GNU GPL requires distribution of source code.
 
+%%% @author José Pablo Ezequiel "Pupeno" Fernández Silva <pupeno@pupeno.com> [http://pupeno.com]
+%%% @copyright 2006 José Pablo Ezequiel "Pupeno" Fernández Silva
+%%% @doc Supervisor for the Fanterlastic Four application.
+
 -module(fanterlasticfour_sup).
 -behaviour(supervisor).
 -export([start_link/0, stop/0, children/0]).
@@ -35,9 +39,9 @@ init(Services) ->
     {ok, {{one_for_one, 1, 5}, []}}.
 
 %% @doc Turn a configuration list into a children specification list.
-%% @since 0.1.0
-%% TODO: write a correct spec, mark the function as private.
-%% @spec () -> Result
+%% @since 0.2.0
+%% @TODO: write a correct spec.
+%% @ spec () -> Result
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 children_specs([]) ->
     io:fwrite("~w:children_specs([])~n", [?MODULE]),
@@ -62,9 +66,9 @@ children_specs(Name) ->
     children_specs({Name}).
 
 %% @doc Turn a compact specification of interfaces (the triple port, ip, transport) into an expanded one where each item is only one transport, one ip (or all) and one port.
-%% @since 0.1.0
-%% TODO: write a correct spec, mark the function as private.
-%% @spec () -> Result
+%% @since 0.2.0
+%% @TODO: write a correct spec.
+%% @ spec () -> Result
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 explode_interfaces({Port, Ip, both}) ->
     lists:flatmap(fun explode_interfaces/1, [{Port, Ip, tcp},
@@ -96,9 +100,10 @@ explode_interfaces(Interfaces) when is_list(Interfaces) ->
 
 
 %% @doc Having a interface definition with some missing parts or some default parts turn in into a interface definition with all parts defined to the real value.
-%% @since 0.1.0
-%% TODO: write a correct spec, mark the function as private.
-%% @spec (Name, Interface) -> {Port, Ip, Transport}.
+%% @private Internal helper function.
+%% @since 0.2.0
+%% @TODO: write a correct spec.
+%% @ spec (Name, Interface) -> {Port, Ip, Transport}.
 fill_defaults(Name, {}) ->
     fill_defaults(Name, {default});
 
@@ -120,16 +125,18 @@ fill_defaults(_Name, {Port, Ip, Transport}) ->
 
 
 %% @doc Shortcut to call fill_defaults(Name, {}) by just providing the first parameter.
-%% @since 0.1.0
-%% TODO: write a correct spec, mark the function as private.
-%% @spec (Name) -> {Port, Ip, Transport}.
+%% @private Internal helper function.
+%% @since 0.2.0
+%% @TODO: write a correct spec.
+%% @ spec (Name) -> {Port, Ip, Transport}.
 fill_defaults(Name) ->
     fill_defaults(Name, {}).
 
 %% @doc Having an interface definition, turn it into a child specification for the supervisor.
-%% @since 0.1.0
-%% TODO: write a correct spec, mark the function as private.
-%% @spec (Name, {Port, Ip, Transport) -> Result
+%% @private Internal helper function.
+%% @since 0.2.0
+%% @TODO: write a correct spec.
+%% @ spec (Name, {Port, Ip, Transport) -> Result
 %%   Result = {Id, {launcher, start_link, [{local, ProcName}, Name, Transport, Port]}, permanent, 1000, worker, [launcher]}.
 child_spec(Name, {Port, Ip, Transport}) ->
     io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
