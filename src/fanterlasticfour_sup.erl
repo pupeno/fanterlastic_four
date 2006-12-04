@@ -114,14 +114,14 @@ fill_defaults(Name, {Port, Ip}) ->
     fill_defaults(Name, {Port, Ip, default});
 
 fill_defaults(Name, {Port, Ip, default}) ->
-    lists:map(fun(Transport) -> fill_defaults(Name, {Port, Ip, Transport}) end, Name:transports());
+    lists:flatmap(fun(Transport) -> fill_defaults(Name, {Port, Ip, Transport}) end, Name:transports());
 
 fill_defaults(Name, {default, Ip, Transport}) ->
     {ok, Port} = inet:getservbyname(Name, Transport),
     fill_defaults(Name, {Port, Ip, Transport});
 
 fill_defaults(_Name, {Port, Ip, Transport}) ->
-    {Port, Ip, Transport}.
+    [{Port, Ip, Transport}].
 
 
 %% @doc Shortcut to call fill_defaults(Name, {}) by just providing the first parameter.
@@ -131,6 +131,7 @@ fill_defaults(_Name, {Port, Ip, Transport}) ->
 %% @ spec (Name) -> {Port, Ip, Transport}.
 fill_defaults(Name) ->
     fill_defaults(Name, {}).
+
 
 %% @doc Having an interface definition, turn it into a child specification for the supervisor.
 %% @private Internal helper function.
@@ -242,8 +243,8 @@ fill_defaults_test_() ->
      ?_assert(fill_defaults(echo, {1543}) == [{1543, all, tcp}, {1543, all, udp}]),
      ?_assert(fill_defaults(echo, {1543, Ip}) == [{1543, Ip, tcp}, {1543, Ip, udp}]),
      ?_assert(fill_defaults(echo, {1543, Ip, default}) == [{1543, Ip, tcp}, {1543, Ip, udp}]),
-     ?_assert(fill_defaults(echo, {default, Ip, tcp}) == {7, Ip, tcp}),
-     ?_assert(fill_defaults(echo, {1543, Ip, tcp}) == {1543, Ip, tcp})].
+     ?_assert(fill_defaults(echo, {default, Ip, tcp}) == [{7, Ip, tcp}]),
+     ?_assert(fill_defaults(echo, {1543, Ip, tcp}) == [{1543, Ip, tcp}])].
 
 
 child_spec_echo_test_() ->
