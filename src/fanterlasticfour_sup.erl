@@ -240,24 +240,24 @@ join(Strs, Separator) ->
 children_specs_test_() ->
     [?_assert(children_specs([echo, {chargen, {1765, all, tcp}}]) ==
               [{echo_tcp_all_7,
-                {launcher, start_link, [{local, echo_tcp_all_7_launcher}, echo, tcp, 7]},
+                {launcher, start_link, [{local, echo_tcp_all_7_launcher}, echo, tcp, all, 7]},
                 permanent, 1000, worker, [launcher]},
                {echo_udp_all_7,
-                {launcher, start_link, [{local, echo_udp_all_7_launcher}, echo, udp, 7]},
+                {launcher, start_link, [{local, echo_udp_all_7_launcher}, echo, udp, all, 7]},
                 permanent, 1000, worker, [launcher]},
                {chargen_tcp_all_1765,
-                {launcher, start_link, [{local, chargen_tcp_all_1765_launcher}, chargen, tcp, 1765]},
+                {launcher, start_link, [{local, chargen_tcp_all_1765_launcher}, chargen, tcp, all, 1765]},
                 permanent, 1000, worker, [launcher]}]),
      ?_assert(children_specs({echo}) ==
               [{echo_tcp_all_7,
-                {launcher, start_link, [{local, echo_tcp_all_7_launcher}, echo, tcp, 7]},
+                {launcher, start_link, [{local, echo_tcp_all_7_launcher}, echo, tcp, all, 7]},
                 permanent, 1000, worker, [launcher]},
                {echo_udp_all_7,
-                {launcher, start_link, [{local, echo_udp_all_7_launcher}, echo, udp, 7]},
+                {launcher, start_link, [{local, echo_udp_all_7_launcher}, echo, udp, all, 7]},
                 permanent, 1000, worker, [launcher]}]),
      ?_assert(children_specs({echo, [{1234, all, tcp}]}) ==
               [{echo_tcp_all_1234,
-                {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
+                {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, all, 1234]},
                 permanent, 1000, worker, [launcher]}]),
      ?_assert(children_specs(echo) == children_specs({echo}))].
 
