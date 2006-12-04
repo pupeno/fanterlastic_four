@@ -159,7 +159,7 @@ child_spec(Name, {Port, Ip, Transport}) ->
     ProcName = list_to_atom(lists:append(BaseName, "_launcher")),
     io:fwrite("  ProcName=~w~n", [ProcName]),
     {Id,
-     {launcher, start_link, [{local, ProcName}, Name, Transport, Port]},
+     {launcher, start_link, [{local, ProcName}, Name, Transport, Ip, Port]},
      permanent, 1000, worker, [launcher]}.
 
 
@@ -281,14 +281,14 @@ fill_defaults_test_() ->
      ?_assert(fill_defaults(echo, {1543, Ip, tcp}) == [{1543, Ip, tcp}])].
 
 
-child_spec_echo_test_() ->
+child_spec_test_() ->
     [?_assert(child_spec(echo, {1234, all, tcp}) ==
               {echo_tcp_all_1234,
-               {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
+               {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, all, 1234]},
                permanent, 1000, worker, [launcher]}),
      ?_assert(child_spec(chargen, {15432, "10.0.0.1", udp}) ==
               {'chargen_udp_10.0.0.1_15432',
-               {launcher, start_link, [{local,'chargen_udp_10.0.0.1_15432_launcher'}, chargen, udp, 15432]},
+               {launcher, start_link, [{local,'chargen_udp_10.0.0.1_15432_launcher'}, chargen, udp, "10.0.0.1", 15432]},
                permanent, 1000, worker, [launcher]})].
 
 
