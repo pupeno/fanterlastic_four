@@ -43,14 +43,6 @@ init(Services) ->
 %% @TODO: write a correct spec.
 %% @ spec () -> Result
 %%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
-children_specs([]) ->
-    io:fwrite("~w:children_specs([])~n", [?MODULE]),
-    [];
-
-children_specs([Service|Services]) ->
-    io:fwrite("~w:children_specs(~w)~n", [?MODULE, [Service|Services]]),
-    lists:append(children_specs(Service), children_specs(Services));
-
 children_specs({Name}) ->
     io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name}]),
     children_specs({Name, [{default, all, default}]});
@@ -61,9 +53,13 @@ children_specs({Name, Interfaces}) ->
               lists:flatmap(fun(I) -> fill_defaults(Name, I) end,
                             explode_interfaces(Interfaces)));
 
-children_specs(Name) ->
+children_specs(Name) when is_atom(Name) ->
     io:fwrite("~w:children_specs(~w)~n", [?MODULE, Name]),
-    children_specs({Name}).
+    children_specs({Name});
+
+children_specs(Services) when is_list(Services) ->
+    io:fwrite("~w:children_specs(~w)~n", [?MODULE, Services]),
+    lists:flatmap(fun children_specs/1, Services).
 
 %% @doc Turn a compact specification of interfaces (the triple port, ip, transport) into an expanded one where each item is only one transport, one ip (or all) and one port.
 %% @since 0.2.0
