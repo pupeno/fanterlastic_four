@@ -21,22 +21,25 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
+%% @TODO Write documentation.
 start_link(Services) ->
     io:fwrite("~w:start_link(~w)~n", [?MODULE, Services]),
     supervisor:start_link({local, ?MODULE}, ?MODULE, Services).
 
 
+%% @TODO Write documentation.
 stop() ->
     io:fwrite("~w:stop()~n", [?MODULE]),
     ?MODULE ! {'EXIT', self(), shutdown},
     ok.
 
-
+%% @TODO Write documentation.
 children() ->
     %%io:fwrite("~w:which_children()~n", [?MODULE]),
     supervisor:which_children(?MODULE).
 
 
+%% @TODO Write documentation.
 init(Services) ->
     io:fwrite("~w:init(~w)~n", [?MODULE, Services]),
     Cs = children_specs(Services),
@@ -44,10 +47,8 @@ init(Services) ->
     {ok, {{one_for_one, 1, 5}, Cs}}.
 
 %% @doc Turn a configuration list into a children specification list.
+%% @private Internal helper function.
 %% @since 0.2.0
-%% @TODO: write a correct spec.
-%% @ spec () -> Result
-%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 children_specs({Name}) ->
     io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name}]),
     children_specs({Name, [{default, all, default}]});
@@ -67,10 +68,8 @@ children_specs(Services) when is_list(Services) ->
     lists:flatmap(fun children_specs/1, Services).
 
 %% @doc Turn a compact specification of interfaces (the triple port, ip, transport) into an expanded one where each item is only one transport, one ip (or all) and one port.
+%% @private Internal helper function.
 %% @since 0.2.0
-%% @TODO: write a correct spec.
-%% @ spec () -> Result
-%%   Result = {ok, Pid} | {error, {already_started, Pid}} | {error, Error}
 explode_interfaces({Port, Ip, both}) ->
     lists:flatmap(fun explode_interfaces/1, [{Port, Ip, tcp},
                                              {Port, Ip, udp}]);
@@ -109,8 +108,6 @@ explode_interfaces(Interfaces) when is_list(Interfaces) ->
 %% @doc Having a interface definition with some missing parts or some default parts turn in into a interface definition with all parts defined to the real value.
 %% @private Internal helper function.
 %% @since 0.2.0
-%% @TODO: write a correct spec.
-%% @ spec (Name, Interface) -> {Port, Ip, Transport}.
 fill_defaults(Name, {}) ->
     fill_defaults(Name, {default});
 
@@ -134,8 +131,6 @@ fill_defaults(_Name, {Port, Ip, Transport}) ->
 %% @doc Shortcut to call fill_defaults(Name, {}) by just providing the first parameter.
 %% @private Internal helper function.
 %% @since 0.2.0
-%% @TODO: write a correct spec.
-%% @ spec (Name) -> {Port, Ip, Transport}.
 fill_defaults(Name) ->
     fill_defaults(Name, {}).
 
@@ -143,9 +138,6 @@ fill_defaults(Name) ->
 %% @doc Having an interface definition, turn it into a child specification for the supervisor.
 %% @private Internal helper function.
 %% @since 0.2.0
-%% @TODO: write a correct spec.
-%% @ spec (Name, {Port, Ip, Transport) -> Result
-%%   Result = {Id, {launcher, start_link, [{local, ProcName}, Name, Transport, Port]}, permanent, 1000, worker, [launcher]}.
 child_spec(Name, {Port, Ip, Transport}) ->
     io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
     BaseName = lists:append([atom_to_list(Name), "_", atom_to_list(Transport), "_",
@@ -167,7 +159,6 @@ child_spec(Name, {Port, Ip, Transport}) ->
 %% @doc Having list of strings and a separator, join or implode into one string with all the strings from the list separated by the separator.
 %% @private Internal helper function.
 %% @since 0.2.0
-%% @spec (Strs, Separator) -> string()
 join(Strs, Separator) ->
     lists:foldr(fun(Str,[]) -> Str; (Str, Acc) -> Str ++ Separator ++ Acc end, "", Strs).
 
