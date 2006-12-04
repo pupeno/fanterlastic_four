@@ -149,7 +149,9 @@ fill_defaults(Name) ->
 child_spec(Name, {Port, Ip, Transport}) ->
     io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
     BaseName = lists:append([atom_to_list(Name), "_", atom_to_list(Transport), "_",
-                             if is_list(Ip) -> Ip;
+                             if is_tuple(Ip) -> join(lists:map(fun(X) -> integer_to_list(X) end,
+                                                               tuple_to_list(Ip)),
+                                                     "_");
                                 is_atom(Ip) -> atom_to_list(Ip)
                              end,
                              "_",integer_to_list(Port)]),
@@ -162,6 +164,12 @@ child_spec(Name, {Port, Ip, Transport}) ->
      {launcher, start_link, [{local, ProcName}, Name, Transport, Ip, Port]},
      permanent, 1000, worker, [launcher]}.
 
+%% @doc Having list of strings and a separator, join or implode into one string with all the strings from the list separated by the separator.
+%% @prinave Internal helper function.
+%% @since 0.2.0
+%% @spec (Strs, Separator) -> string()
+join(Strs, Separator) ->
+    lists:foldr(fun(Str,[]) -> Str; (Str, Acc) -> Str ++ Separator ++ Acc end, "", Strs).
 
     %% {ok, EchoUDPPort} = application:get_env(echoUDPPort),
 %%     {ok, EchoTCPPort} = application:get_env(echoTCPPort),
@@ -286,10 +294,17 @@ child_spec_test_() ->
               {echo_tcp_all_1234,
                {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, all, 1234]},
                permanent, 1000, worker, [launcher]}),
-     ?_assert(child_spec(chargen, {15432, "10.0.0.1", udp}) ==
-              {'chargen_udp_10.0.0.1_15432',
-               {launcher, start_link, [{local,'chargen_udp_10.0.0.1_15432_launcher'}, chargen, udp, "10.0.0.1", 15432]},
+     ?_assert(child_spec(chargen, {15432, {10,0,0,1}, udp}) ==
+              {'chargen_udp_10_0_0_1_15432',
+               {launcher, start_link, [{local,'chargen_udp_10_0_0_1_15432_launcher'}, chargen, udp, {10,0,0,1}, 15432]},
+               permanent, 1000, worker, [launcher]}),
+     ?_assert(child_spec(time, {7654, {8194,0,0,0,0,0,0,1}, udp}) ==
+              {'time_udp_8194_0_0_0_0_0_0_1_7654',
+               {launcher, start_link, [{local,'time_udp_8194_0_0_0_0_0_0_1_7654_launcher'}, time, udp, {8194,0,0,0,0,0,0,1}, 7654]},
                permanent, 1000, worker, [launcher]})].
+
+join_test_() ->
+    [?_assert(join(["a", "b", "c"], ",") == "a,b,c")].
 
 
 -endif. %% ifdef(TEST).
