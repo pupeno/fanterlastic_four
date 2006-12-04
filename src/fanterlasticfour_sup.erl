@@ -262,9 +262,9 @@ child_spec_echo_test_() ->
               {echo_tcp_all_1234,
                {launcher, start_link, [{local, echo_tcp_all_1234_launcher}, echo, tcp, 1234]},
                permanent, 1000, worker, [launcher]}),
-     ?_assert(child_spec(chargen, {10000, "10.0.0.1", udp}) ==
-              {'chargen_udp_10.0.0.1_10000',
-               {launcher, start_link, [{local,'chargen_udp_10.0.0.1_10000_launcher'}, chargen, udp, 10000]},
+     ?_assert(child_spec(chargen, {15432, "10.0.0.1", udp}) ==
+              {'chargen_udp_10.0.0.1_15432',
+               {launcher, start_link, [{local,'chargen_udp_10.0.0.1_15432_launcher'}, chargen, udp, 15432]},
                permanent, 1000, worker, [launcher]})].
 
 
