@@ -22,5 +22,5 @@ start(_Type, _Args) ->
     fanterlasticfour_sup:start_link(Services).
 
 stop(_State) ->
-    %%io:fwrite("~w:start_link(~w)~n", [?MODULE, _State]),
+    %%io:fwrite("~w:stop(~w)~n", [?MODULE, _State]),
     ok.
