@@ -72,7 +72,7 @@ start_link(SupName) ->
 %% @spec (Name) -> ok
 %%   Name = atom() | {local, atom()} | {global, atom()}
 stop(Process) ->
-    %io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
+    %%io:fwrite("~w:stop(~w)~n", [?MODULE, Process]),
     gen_time:stop(Process).
 
 %% @doc Initialize the daytime server... nothing really.

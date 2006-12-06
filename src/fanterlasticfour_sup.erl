@@ -23,13 +23,13 @@
 
 %% @TODO Write documentation.
 start_link(Services) ->
-    io:fwrite("~w:start_link(~w)~n", [?MODULE, Services]),
+    %%io:fwrite("~w:start_link(~w)~n", [?MODULE, Services]),
     supervisor:start_link({local, ?MODULE}, ?MODULE, Services).
 
 
 %% @TODO Write documentation.
 stop() ->
-    io:fwrite("~w:stop()~n", [?MODULE]),
+    %%io:fwrite("~w:stop()~n", [?MODULE]),
     ?MODULE ! {'EXIT', self(), shutdown},
     ok.
 
@@ -41,30 +41,30 @@ children() ->
 
 %% @TODO Write documentation.
 init(Services) ->
-    io:fwrite("~w:init(~w)~n", [?MODULE, Services]),
+    %%io:fwrite("~w:init(~w)~n", [?MODULE, Services]),
     Cs = children_specs(Services),
-    io:fwrite(" Child specs: ~w.~n", [Cs]),
+    %%io:fwrite("  Child specs: ~w.~n", [Cs]),
     {ok, {{one_for_one, 1, 5}, Cs}}.
 
 %% @doc Turn a configuration list into a children specification list.
 %% @private Internal helper function.
 %% @since 0.2.0
 children_specs({Name}) ->
-    io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name}]),
+    %%io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name}]),
     children_specs({Name, [{default, all, default}]});
 
 children_specs({Name, Interfaces}) ->
-    io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name, Interfaces}]),
+    %%io:fwrite("~w:children_specs(~w)~n", [?MODULE, {Name, Interfaces}]),
     lists:map(fun(I) -> child_spec(Name, I) end,
               lists:flatmap(fun(I) -> fill_defaults(Name, I) end,
                             explode_interfaces(Interfaces)));
 
 children_specs(Name) when is_atom(Name) ->
-    io:fwrite("~w:children_specs(~w)~n", [?MODULE, Name]),
+    %%io:fwrite("~w:children_specs(~w)~n", [?MODULE, Name]),
     children_specs({Name});
 
 children_specs(Services) when is_list(Services) ->
-    io:fwrite("~w:children_specs(~w)~n", [?MODULE, Services]),
+    %%io:fwrite("~w:children_specs(~w)~n", [?MODULE, Services]),
     lists:flatmap(fun children_specs/1, Services).
 
 %% @doc Turn a compact specification of interfaces (the triple port, ip, transport) into an expanded one where each item is only one transport, one ip (or all) and one port.
@@ -139,7 +139,7 @@ fill_defaults(Name) ->
 %% @private Internal helper function.
 %% @since 0.2.0
 child_spec(Name, {Port, Ip, Transport}) ->
-    io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
+    %%io:fwrite("~w:child_spec(~w, ~w)~n", [?MODULE, Name, {Port, Ip, Transport}]),
     BaseName = lists:append([atom_to_list(Name), "_", atom_to_list(Transport), "_",
                              if is_tuple(Ip) -> join(lists:map(fun(X) -> integer_to_list(X) end,
                                                                tuple_to_list(Ip)),
@@ -147,11 +147,8 @@ child_spec(Name, {Port, Ip, Transport}) ->
                                 is_atom(Ip) -> atom_to_list(Ip)
                              end,
                              "_",integer_to_list(Port)]),
-    io:fwrite("  BaseName=~w~n", [BaseName]),
     Id = list_to_atom(BaseName),
-    io:fwrite("  Id=~w~n", [Id]),
     ProcName = list_to_atom(lists:append(BaseName, "_launcher")),
-    io:fwrite("  ProcName=~w~n", [ProcName]),
     {Id,
      {launcher, start_link, [{local, ProcName}, Name, Transport, Ip, Port]},
      permanent, 1000, worker, [launcher]}.
@@ -161,65 +158,6 @@ child_spec(Name, {Port, Ip, Transport}) ->
 %% @since 0.2.0
 join(Strs, Separator) ->
     lists:foldr(fun(Str,[]) -> Str; (Str, Acc) -> Str ++ Separator ++ Acc end, "", Strs).
-
-    %% {ok, EchoUDPPort} = application:get_env(echoUDPPort),
-%%     {ok, EchoTCPPort} = application:get_env(echoTCPPort),
-%%     {ok, ChargenUDPPort} = application:get_env(chargenUDPPort),
-%%     {ok, ChargenTCPPort} = application:get_env(chargenTCPPort),
-%%     {ok, DaytimeUDPPort} = application:get_env(daytimeUDPPort),
-%%     {ok, DaytimeTCPPort} = application:get_env(daytimeTCPPort),
-%%     {ok, TimeUDPPort} = application:get_env(timeUDPPort),
-%%     {ok, TimeTCPPort} = application:get_env(timeTCPPort),
-%%     {ok, PortOffset} = application:get_env(portOffset),
-%%     {ok, {{one_for_one, 1, 5},
-%%           [{echo_udp,
-%%             {launcher, start_link, [{local, echo_udp_launcher},
-%%                                     echo,
-%%                                     udp,
-%%                                     EchoUDPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {echo_tcp,
-%%             {launcher, start_link, [{local, echo_tcp_launcher},
-%%                                     echo,
-%%                                     tcp,
-%%                                     EchoTCPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {chargen_udp,
-%%             {launcher, start_link, [{local, chargen_udp_launcher},
-%%                                     chargen,
-%%                                     udp,
-%%                                     ChargenUDPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {chargen_tcp,
-%%             {launcher, start_link, [{local, chargen_tcp_launcher},
-%%                                     chargen,
-%%                                     tcp,
-%%                                     ChargenTCPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {daytime_udp,
-%%             {launcher, start_link, [{local, daytime_udp_launcher},
-%%                                     daytime,
-%%                                     udp,
-%%                                     DaytimeUDPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {daytime_tcp,
-%%             {launcher, start_link, [{local, daytime_tcp_launcher},
-%%                                     daytime,
-%%                                     tcp,
-%%                                     DaytimeTCPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {time_udp,
-%%             {launcher, start_link, [{local, time_udp_launcher},
-%%                                     time,
-%%                                     udp,
-%%                                     TimeUDPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]},
-%%            {time_tcp,
-%%             {launcher, start_link, [{local, time_tcp_launcher},
-%%                                     time,
-%%                                     tcp,
-%%                                     TimeTCPPort + PortOffset]},
-%%             permanent, 1000, worker, [launcher]}]}}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
