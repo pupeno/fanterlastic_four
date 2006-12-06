@@ -17,8 +17,6 @@
 -export([start_link/1, stop/0, children/0]).
 -export([init/1]).
 
--compile(export_all).
-
 -include_lib("eunit/include/eunit.hrl").
 
 %% @TODO Write documentation.
